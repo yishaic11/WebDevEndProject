@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { register, login, logout, refreshToken, getCurrentUser } from '../controllers/auth';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { uploadProfileImage } from '../utils/storage';
+import { uploadProfileImage } from '../utils';
 
 const router: Router = Router();
 

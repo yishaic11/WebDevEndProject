@@ -2,9 +2,8 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import type { UpdateUserDto, UserResponseDto } from '../dtos/user.dto';
 import User from '../models/user';
-import { getBaseUrl } from '../utils/url';
+import { getBaseUrl, sendError } from '../utils';
 import type { ParamsDictionary } from 'express-serve-static-core';
-import { sendError } from '../utils/errors';
 
 interface IdParam extends ParamsDictionary {
   id: string;

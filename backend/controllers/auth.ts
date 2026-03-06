@@ -3,8 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
 import type { UserResponseDto } from '../dtos/user.dto';
-import { sendError } from '../utils/errors';
-import { signAccessToken, signRefreshToken } from '../utils/auth';
+import { signAccessToken, signRefreshToken, sendError, getBaseUrl } from '../utils';
 import type { AuthTokensDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import type { TokenPayload } from '../types/auth';
 
@@ -31,7 +30,6 @@ export const register = async (
 
     let photoUrl: string | undefined;
     if (req.file) {
-      const { getBaseUrl } = await import('../utils/url');
       const base = getBaseUrl();
       const filePath = req.file.path.replace(/\\/g, '/');
       photoUrl = `${base}${filePath}`;

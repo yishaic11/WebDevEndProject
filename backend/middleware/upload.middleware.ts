@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { uploadPostImage, uploadProfileImage } from '../utils/storage';
+import { uploadPostImage, uploadProfileImage } from '../utils';
 
 export const postImageMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const upload = uploadPostImage.single('photo');
