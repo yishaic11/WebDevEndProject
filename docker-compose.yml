@@ -16,8 +16,6 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    environment:
-      - DATABASE_URL=mongodb://mongodb:27017/mydatabase
     env_file:
       - .env
     depends_on:
