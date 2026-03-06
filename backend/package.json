@@ -1,0 +1,36 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "0.0.0",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "tsc && node --env-file=../.env dist/app.js",
+    "start": "tsc && node dist/app.js",
+    "lint": "eslint . --ext .ts",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test:coverage": "jest --coverage --runInBand --forceExit"
+  },
+  "authors": [
+    "Yael Abbo",
+    "Yishai Chen"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "globals": "^17.3.0",
+    "mongoose": "^9.0.1",
+    "typescript-eslint": "^8.56.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.1",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
