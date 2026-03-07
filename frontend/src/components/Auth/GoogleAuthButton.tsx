@@ -1,5 +1,5 @@
 import { Button, Box } from '@mui/material';
-import { API_URL as BACKEND_URL } from '../../config/env';
+import { API_URL } from '../../config/env';
 
 export const GoogleAuthButton = () => {
   return (
@@ -16,7 +16,7 @@ export const GoogleAuthButton = () => {
       <Button
         fullWidth
         variant='outlined'
-        href={`${BACKEND_URL}/auth/google`}
+        href={`${API_URL}/auth/google`}
         startIcon={
           <Box
             component='img'
