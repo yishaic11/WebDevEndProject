@@ -12,4 +12,10 @@ export const authApi = {
     // TODO: Implement once backend is ready.
     console.log('authApi.register not implemented yet with ', data);
   },
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  logout: async (): Promise<void> => {
+    // TODO: Implement once backend is ready.
+    console.log('authApi.logout not implemented yet');
+  },
 };
