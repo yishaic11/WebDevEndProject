@@ -2,15 +2,14 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
-import type { UserResponseDto } from '../dtos/user.dto';
 import { signAccessToken, signRefreshToken, sendError, getBaseUrl } from '../utils';
-import type { AuthTokensDto, LoginDto, RegisterDto } from '../dtos/auth.dto';
+import type { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import type { TokenPayload } from '../types/auth';
 
 export const register = async (
   req: Request<Record<string, string>, unknown, RegisterDto>,
   res: Response,
-): Promise<UserResponseDto> => {
+): Promise<void> => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -49,46 +48,31 @@ export const register = async (
       email: createdUser.email,
       photoUrl: createdUser.photoUrl,
     });
-
-    return {
-      _id: createdUser._id.toString(),
-      username: createdUser.username,
-      email: createdUser.email,
-      photoUrl: createdUser.photoUrl,
-    };
-  } catch (error) {
+  } catch {
     sendError(res, 400, 'Error registering user.');
-    throw error;
   }
 };
 
-export const login = async (
-  req: Request<Record<string, string>, unknown, LoginDto>,
-  res: Response,
-): Promise<AuthTokensDto | void> => {
+export const login = async (req: Request<Record<string, string>, unknown, LoginDto>, res: Response): Promise<void> => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    sendError(res, 400, 'Username and password are required.');
-    throw new Error('Username and password are required.');
+    return sendError(res, 400, 'Username and password are required.');
   }
 
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      sendError(res, 400, 'Invalid username or password.');
-      throw new Error('Invalid username or password.');
+      return sendError(res, 400, 'Invalid username or password.');
     }
 
     if (!user.password) {
-      sendError(res, 400, 'This account uses social login. Please sign in with Google or Facebook.');
-      throw new Error('No password on this account.');
+      return sendError(res, 400, 'This account uses social login. Please sign in with Google.');
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      sendError(res, 400, 'Invalid username or password.');
-      throw new Error('Invalid username or password.');
+      return sendError(res, 400, 'Invalid username or password.');
     }
 
     const accessToken = signAccessToken({ _id: user._id });
@@ -110,11 +94,8 @@ export const login = async (
       accessToken,
       refreshToken,
     });
-
-    return { accessToken, refreshToken };
-  } catch (error) {
+  } catch {
     sendError(res, 400, 'Error during login.');
-    throw error;
   }
 };
 
@@ -124,13 +105,11 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
   const secret = process.env.REFRESH_TOKEN_SECRET;
 
   if (!token) {
-    sendError(res, 401, 'No token provided');
-    throw new Error('No token provided');
+    return sendError(res, 401, 'No token provided');
   }
 
   if (!secret) {
-    sendError(res, 500, 'REFRESH_TOKEN_SECRET is not defined');
-    throw new Error('REFRESH_TOKEN_SECRET is not defined');
+    return sendError(res, 500, 'REFRESH_TOKEN_SECRET is not defined');
   }
 
   try {
@@ -139,8 +118,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
 
     const user = await User.findById(userId);
     if (!user) {
-      sendError(res, 403, 'Invalid Request');
-      throw new Error('Invalid Request');
+      return sendError(res, 403, 'Invalid Request');
     }
 
     const tokenExists = user.refreshTokens.includes(token);
@@ -149,8 +127,7 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
       user.refreshTokens = [];
       await user.save();
 
-      sendError(res, 403, 'Token reuse detected');
-      throw new Error('Token reuse detected');
+      return sendError(res, 403, 'Token reuse detected');
     }
 
     const accessToken = signAccessToken({ _id: user._id });
@@ -161,9 +138,8 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
 
     await user.save();
     res.status(200).json({ accessToken, refreshToken: newRefreshToken });
-  } catch (error) {
+  } catch {
     sendError(res, 403, 'Invalid or expired token');
-    throw error;
   }
 };
 
@@ -173,37 +149,33 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   const secret = process.env.REFRESH_TOKEN_SECRET;
 
   if (!token) {
-    sendError(res, 401, 'No token provided');
-    throw new Error('No token provided');
+    return sendError(res, 401, 'No token provided');
   }
 
   if (!secret) {
-    sendError(res, 500, 'REFRESH_TOKEN_SECRET is not defined');
-    throw new Error('REFRESH_TOKEN_SECRET is not defined');
+    return sendError(res, 500, 'REFRESH_TOKEN_SECRET is not defined');
   }
 
   try {
     const userInfo = jwt.verify(token, secret) as TokenPayload;
     const user = await User.findById(userInfo._id);
     if (!user) {
-      sendError(res, 403, 'Invalid Request');
-      throw new Error('Invalid Request');
+      return sendError(res, 403, 'Invalid Request');
     }
 
     if (!user.refreshTokens.includes(token)) {
       user.refreshTokens = [];
       await user.save();
 
-      sendError(res, 403, 'Invalid Request');
-      throw new Error('Invalid Request');
+      return sendError(res, 403, 'Invalid Request');
     }
 
     user.refreshTokens = user.refreshTokens.filter((t) => t !== token);
+
     await user.save();
     res.status(200).send({ message: 'Logged out successfully' });
-  } catch (error) {
+  } catch {
     sendError(res, 403, 'Logout Error');
-    throw error;
   }
 };
 
@@ -211,25 +183,30 @@ export const getCurrentUser = async (req: Request, res: Response): Promise<void>
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+
     if (!token) {
-      sendError(res, 401, 'No token provided');
-      return;
+      return sendError(res, 401, 'No token provided');
     }
 
-    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string) as jwt.JwtPayload & { _id: string };
+    if (!secret) {
+      return sendError(res, 500, 'ACCESS_TOKEN_SECRET is not defined');
+    }
+
+    const payload = jwt.verify(token, secret) as TokenPayload;
     const user = await User.findById(payload._id);
     if (!user) {
-      sendError(res, 404, 'User not found');
-      return;
+      return sendError(res, 404, 'User not found');
     }
 
+    const { _id, username, email, photoUrl } = user;
     res.json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      photoUrl: user.photoUrl,
+      _id,
+      username,
+      email,
+      photoUrl,
     });
   } catch {
-    sendError(res, 403, 'Invalid or expired token');
+    sendError(res, 403, 'Get current user error, invalid or expired token');
   }
 };

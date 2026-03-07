@@ -1,10 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import jwt, { type JwtPayload } from 'jsonwebtoken';
+import type { Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import { sendError } from '../utils';
-
-interface AuthenticatedRequest extends Request {
-  user?: JwtPayload | string;
-}
+import type { AuthenticatedRequest, TokenPayload } from '../types/auth';
 
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
@@ -27,7 +24,7 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
       throw error;
     }
 
-    req.user = user;
+    req.user = user as TokenPayload;
     next();
   });
 };

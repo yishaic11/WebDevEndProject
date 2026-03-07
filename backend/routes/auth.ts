@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { register, login, logout, refreshToken, getCurrentUser } from '../controllers/auth';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { uploadProfileImage } from '../utils';
+import { profileImageMiddleware } from '../middleware/upload.middleware';
 
 const router: Router = Router();
 
-router.post('/register', uploadProfileImage.single('photo'), register);
+router.post('/register', profileImageMiddleware, register);
 
 router.get('/me', authMiddleware, getCurrentUser);
 
