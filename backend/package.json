@@ -8,7 +8,9 @@
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "test:coverage": "jest --coverage --runInBand --forceExit"
+    "test:coverage": "jest --coverage --runInBand --forceExit",
+    "testuser": "jest --runInBand --detectOpenHandles --forceExit ./tests/users.spec.ts",
+    "testauth": "jest --runInBand --detectOpenHandles --forceExit ./tests/auth.spec.ts"
   },
   "authors": [
     "Yael Abbo",
@@ -22,7 +24,9 @@
     "globals": "^17.3.0",
     "mongoose": "^9.0.1",
     "typescript-eslint": "^8.56.1",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "bcrypt": "^6.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -33,6 +37,9 @@
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
-    "@types/multer": "^2.0.0"
+    "@types/multer": "^2.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/bcrypt": "^6.0.0",
+    "@types/supertest": "^6.0.3"
   }
 }
