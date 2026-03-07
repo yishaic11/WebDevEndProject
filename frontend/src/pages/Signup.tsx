@@ -99,24 +99,33 @@ export const Signup = () => {
                   helperText={errors.password?.message}
                 />
               </Stack>
-
-              <Button
-                fullWidth
-                type='submit'
-                variant='contained'
-                disabled={isSubmitting}
+              <Box
                 sx={{
-                  mt: 2,
-                  borderRadius: '2vh',
-                  height: '7vh',
-                  bgcolor: '#44A194',
-                  fontWeight: 800,
-                  fontSize: '2vh',
-                  '&:hover': { bgcolor: '#388e83' },
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-                {isSubmitting ? 'Creating...' : 'Create Account'}
-              </Button>
+                <Button
+                  fullWidth
+                  type='submit'
+                  variant='contained'
+                  disabled={isSubmitting}
+                  sx={{
+                    mt: 2,
+                    p: '1.2vh',
+                    borderRadius: '2vh',
+                    width: 'inherit',
+                    bgcolor: '#44A194',
+                    '&:hover': { bgcolor: '#388e83' },
+                  }}
+                >
+                  {isSubmitting ? (
+                    <Typography sx={{ marginX: 2, fontWeight: 800 }}>Creating...</Typography>
+                  ) : (
+                    <Typography sx={{ marginX: 2, fontWeight: 800 }}>Create Account</Typography>
+                  )}
+                </Button>
+              </Box>
 
               <Typography variant='body2' sx={{ mt: 2, textAlign: 'center', color: '#537D96' }}>
                 Already have an account?{' '}
@@ -131,7 +140,7 @@ export const Signup = () => {
             </Box>
           </Box>
 
-          <Box sx={{ flex: 0.8, bgcolor: 'rgba(68, 161, 148, 0.03)', display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ flex: 0.8, bgcolor: 'rgba(68, 161, 148, 0.03)' }}>
             <GoogleAuthButton />
           </Box>
         </Stack>

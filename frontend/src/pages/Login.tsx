@@ -14,7 +14,7 @@ import {
   Alert,
   Stack,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link as RouterLink, useSearchParams, Navigate } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { loginSchema, type LoginInput } from '../utils/validations';
@@ -102,24 +102,34 @@ export const Login = () => {
                   },
                 }}
               />
-              <Button
-                fullWidth
-                type='submit'
-                variant='contained'
-                disabled={isSubmitting}
-                startIcon={<LoginIcon />}
+              <Box
                 sx={{
-                  mt: 2,
-                  borderRadius: '2vh',
-                  height: '7vh',
-                  bgcolor: '#44A194',
-                  fontWeight: 800,
-                  fontSize: '2vh',
-                  '&:hover': { bgcolor: '#388e83' },
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
-                {isSubmitting ? 'Signing in...' : 'Sign In'}
-              </Button>
+                <Button
+                  fullWidth
+                  type='submit'
+                  variant='contained'
+                  disabled={isSubmitting}
+                  sx={{
+                    mt: 1,
+                    p: '1.2vh',
+                    borderRadius: '2vh',
+                    width: 'inherit',
+                    bgcolor: '#44A194',
+                    '&:hover': { bgcolor: '#388e83' },
+                  }}
+                >
+                  {isSubmitting ? (
+                    <Typography sx={{ marginX: 2, fontWeight: 800 }}>Signing in...</Typography>
+                  ) : (
+                    <Typography sx={{ marginX: 2, fontWeight: 800 }}>Sign In</Typography>
+                  )}
+                </Button>
+              </Box>
+
               <Typography variant='body2' sx={{ mt: 2, textAlign: 'center' }}>
                 New here?{' '}
                 <Link component={RouterLink} to='/signup' sx={{ color: '#44A194', fontWeight: 700 }}>
