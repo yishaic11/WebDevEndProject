@@ -44,13 +44,9 @@ export const Login = () => {
     setErrorMsg(null);
 
     try {
-      const res = await authApi.login(data);
+      const { _id, id, username, email, photoUrl, accessToken, refreshToken } = await authApi.login(data);
 
-      login(
-        { id: res._id ?? res.id, username: res.username, email: res.email, photoUrl: res.photoUrl },
-        res.accessToken,
-        res.refreshToken,
-      );
+      login({ id: _id ?? id, username, email, photoUrl }, accessToken, refreshToken);
 
       void navigate('/home');
     } catch {

@@ -13,13 +13,13 @@ export const register = async (
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    sendError(res, 400, 'Username, email, and password are required.');
+    return sendError(res, 400, 'Username, email, and password are required.');
   }
 
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      sendError(res, 400, 'Username or email already exists.');
+      return sendError(res, 400, 'Username or email already exists.');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -213,8 +213,7 @@ export const oauthCallback = async (req: Request, res: Response): Promise<void> 
   try {
     const user = req.user as unknown as IUser;
     if (!user) {
-      res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/login?error=oauth_failed`);
-      return;
+      return res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/login?error=oauth_failed`);
     }
 
     const accessToken = signAccessToken({ _id: user._id });
@@ -227,10 +226,10 @@ export const oauthCallback = async (req: Request, res: Response): Promise<void> 
     const params = new URLSearchParams({
       accessToken,
       refreshToken,
-      _id: (user._id as unknown as string).toString(),
+      _id: String(user._id),
       username: user.username,
       email: user.email,
-      ...(user.photoUrl ? { photoUrl: user.photoUrl } : {}),
+      ...(user.photoUrl && { photoUrl: user.photoUrl }),
     });
 
     res.redirect(`${frontendUrl}/oauth-callback?${params.toString()}`);
