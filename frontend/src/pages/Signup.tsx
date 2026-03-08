@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TextField, Button, Typography, Paper, Box, Link, Alert, Stack, Divider } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { signupSchema, type SignupInput } from '../utils/validations';
 import defaultProfileImg from '../assets/default-profile-image.png';
 import { ImageUpload } from '../components/Common/ImageUpload';
 import { useImageUpload } from '../hooks/useImageUpload';
+import { useAuth } from '../hooks/useAuth';
 import { authApi } from '../api/auth.api';
 import { GoogleAuthButton } from '../components/Auth/GoogleAuthButton';
 
 export const Signup = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const {
@@ -30,9 +33,15 @@ export const Signup = () => {
     setErrorMsg(null);
 
     try {
-      await authApi.register({ ...data });
+      const res = await authApi.register({ ...data });
 
-      // TODO: Implement after backend user & auth implementation
+      login(
+        { id: res._id ?? res.id, username: res.username, email: res.email, photoUrl: res.photoUrl },
+        res.accessToken,
+        res.refreshToken,
+      );
+
+      void navigate('/home');
     } catch {
       setErrorMsg('Username or email already taken.');
     }
