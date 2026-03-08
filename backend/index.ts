@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import authRouter from './routes/auth';
 import usersRouter from './routes/users';
+import passport from 'passport';
+import { initPassport } from './config/passport';
 
 dotenv.config({ path: '../.env' });
 const app: Express = express();
@@ -18,6 +20,9 @@ const initApp = () => {
       res.header('Access-Control-Allow-Methods', '*');
       next();
     });
+
+    initPassport();
+    app.use(passport.initialize());
 
     app.use('/coverage', express.static(path.join(process.cwd(), 'coverage/lcov-report')));
 
