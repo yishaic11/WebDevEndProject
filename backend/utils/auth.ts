@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import type { AuthenticatedRequest } from '../types/auth';
+import { type Request } from 'express';
 
 export const signAccessToken = (payload: object): string => {
   const expiresIn = process.env.ACCESS_TOKEN_EXPIRATION || '1d';
@@ -24,7 +24,7 @@ export const signRefreshToken = (payload: object): string => {
   return jwt.sign(payload, refreshTokenSecret);
 };
 
-export const getActiveUserId = (req: AuthenticatedRequest): string => {
+export const getActiveUserId = (req: Request): string => {
   const { user } = req;
 
   if (!user || typeof user === 'string') {

@@ -1,9 +1,8 @@
 import type { Request, Response } from 'express';
 import type { ParamsDictionary } from 'express-serve-static-core';
 import type { UpdateUserDto, UserResponseDto } from '../dtos/user.dto';
-import type { AuthenticatedRequest } from '../types/auth';
-import User from '../models/user';
 import { getActiveUserId, getBaseUrl, sendError } from '../utils';
+import User from '../models/user';
 
 interface IdParam extends ParamsDictionary {
   id: string;
@@ -45,10 +44,7 @@ export const getUserById = async (req: Request<IdParam>, res: Response): Promise
   }
 };
 
-export const updateUser = async (
-  req: AuthenticatedRequest<IdParam, unknown, UpdateUserDto>,
-  res: Response,
-): Promise<void> => {
+export const updateUser = async (req: Request<IdParam, unknown, UpdateUserDto>, res: Response): Promise<void> => {
   const senderId = getActiveUserId(req);
   const { id: userId } = req.params;
 
@@ -82,7 +78,7 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (req: AuthenticatedRequest<IdParam>, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request<IdParam>, res: Response): Promise<void> => {
   const senderId = getActiveUserId(req);
   const { id: userId } = req.params;
 
