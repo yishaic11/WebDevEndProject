@@ -15,7 +15,7 @@ import {
   Stack,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link as RouterLink, useSearchParams, Navigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useSearchParams, Navigate } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { loginSchema, type LoginInput } from '../utils/validations';
 import { useAuth } from '../hooks/useAuth';
@@ -25,8 +25,9 @@ import { GoogleAuthButton } from '../components/Auth/GoogleAuthButton';
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isAuthenticated } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const oauthError = searchParams.get('error');
 
   const {
@@ -43,9 +44,15 @@ export const Login = () => {
     setErrorMsg(null);
 
     try {
-      await authApi.login(data);
+      const res = await authApi.login(data);
 
-      // TODO: Implement after backend user & auth implementation
+      login(
+        { id: res._id ?? res.id, username: res.username, email: res.email, photoUrl: res.photoUrl },
+        res.accessToken,
+        res.refreshToken,
+      );
+
+      void navigate('/home');
     } catch {
       setErrorMsg('Invalid username or password.');
     }
