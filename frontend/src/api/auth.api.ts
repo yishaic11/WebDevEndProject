@@ -1,7 +1,7 @@
 import api from './axios';
 import type { LoginPayload, RegisterPayload, User } from '../types/auth.types';
 
-export interface AuthResponse extends User {
+interface AuthResponse extends User {
   _id?: string;
   accessToken: string;
   refreshToken: string;

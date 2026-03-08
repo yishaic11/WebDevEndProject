@@ -3,12 +3,15 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user';
 
 export const initPassport = (): void => {
-  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  const googleClientID = process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (googleClientID && googleClientSecret) {
     passport.use(
       new GoogleStrategy(
         {
-          clientID: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          clientID: googleClientID,
+          clientSecret: googleClientSecret,
           callbackURL: `${process.env.BACKEND_URL ?? 'http://localhost:3000'}/auth/google/callback`,
         },
         (_accessToken, _refreshToken, profile, done) => {
@@ -30,11 +33,9 @@ export const initPassport = (): void => {
                 } else {
                   const baseUsername = profile.displayName.replace(/\s+/g, '_').toLowerCase();
                   let username = baseUsername;
-                  let counter = 1;
 
-                  while (await User.findOne({ username })) {
-                    username = `${baseUsername}_${counter++}`;
-                  }
+                  const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
+                  username = `${baseUsername}${uniqueSuffix}`;
 
                   user = await User.create({
                     googleId: profile.id,

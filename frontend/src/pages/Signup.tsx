@@ -33,13 +33,9 @@ export const Signup = () => {
     setErrorMsg(null);
 
     try {
-      const res = await authApi.register({ ...data });
+      const { _id, id, username, email, photoUrl, accessToken, refreshToken } = await authApi.register({ ...data });
 
-      login(
-        { id: res._id ?? res.id, username: res.username, email: res.email, photoUrl: res.photoUrl },
-        res.accessToken,
-        res.refreshToken,
-      );
+      login({ id: _id ?? id, username, email, photoUrl }, accessToken, refreshToken);
 
       void navigate('/home');
     } catch {
