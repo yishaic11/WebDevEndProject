@@ -1,4 +1,5 @@
 import User from '../models/user';
+import Post from '../models/post';
 import type { Express } from 'express';
 import request from 'supertest';
 import type { UserResponseDto } from '../dtos/user.dto';
@@ -11,6 +12,15 @@ export const userData = {
   _id: '',
   accessToken: '',
   refreshToken: '',
+};
+
+export const createTestPost = async (senderId: string, content?: string) => {
+  const post = await Post.create({
+    senderId,
+    content: content || 'Test post content',
+  });
+
+  return post;
 };
 
 export const registerTestUser = async (app: Express) => {
