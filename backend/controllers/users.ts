@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import type { UpdateUserDto, UserResponseDto } from '../dtos/user.dto';
 import { getActiveUserId, getBaseUrl, sendError } from '../utils';
 import type { IdParam } from '../types/common';
+import User from '../models/user';
 
 export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
