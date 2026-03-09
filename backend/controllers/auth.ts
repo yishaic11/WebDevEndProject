@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/user';
+import User, { type IUser } from '../models/user';
 import { signAccessToken, signRefreshToken, sendError, getBaseUrl } from '../utils';
 import type { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import type { TokenPayload } from '../types/auth';
@@ -13,15 +13,13 @@ export const register = async (
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    sendError(res, 400, 'Username, email, and password are required.');
-    throw new Error('Username, email, and password are required.');
+    return sendError(res, 400, 'Username, email, and password are required.');
   }
 
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      sendError(res, 400, 'Username or email already exists.');
-      throw new Error('Username or email already exists.');
+      return sendError(res, 400, 'Username or email already exists.');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -208,5 +206,34 @@ export const getCurrentUser = async (req: Request, res: Response): Promise<void>
     });
   } catch {
     sendError(res, 403, 'Get current user error, invalid or expired token');
+  }
+};
+
+export const oauthCallback = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = req.user as unknown as IUser;
+    if (!user) {
+      return res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/login?error=oauth_failed`);
+    }
+
+    const accessToken = signAccessToken({ _id: user._id });
+    const refreshToken = signRefreshToken({ _id: user._id });
+
+    user.refreshTokens = [...(user.refreshTokens ?? []), refreshToken];
+    await user.save();
+
+    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173';
+    const params = new URLSearchParams({
+      accessToken,
+      refreshToken,
+      _id: String(user._id),
+      username: user.username,
+      email: user.email,
+      ...(user.photoUrl && { photoUrl: user.photoUrl }),
+    });
+
+    res.redirect(`${frontendUrl}/oauth-callback?${params.toString()}`);
+  } catch {
+    res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/login?error=oauth_failed`);
   }
 };
