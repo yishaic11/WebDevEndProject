@@ -12,7 +12,7 @@ export interface Post {
 export interface ApiPost {
   _id: string;
   content: string;
-  photoUrl?: string;
+  photoUrl: string;
   senderId: string;
   likes: string[];
 }
@@ -20,4 +20,9 @@ export interface ApiPost {
 export interface UpdatePostPayload {
   content?: string;
   photo?: File;
+}
+
+export interface CreatePostPayload {
+  content: string;
+  photo: File;
 }

@@ -85,7 +85,7 @@ export const PostCard = (props: PostProps) => {
           </Typography>
         </Box>
       </Paper>
-      // TODO: Implement PostViewModal once implemented
+      {/* // TODO: Implement PostViewModal once implemented */}
     </>
   );
 };
