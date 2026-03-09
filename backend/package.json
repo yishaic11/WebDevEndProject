@@ -10,7 +10,8 @@
     "test": "jest --runInBand --detectOpenHandles --forceExit",
     "test:coverage": "jest --coverage --runInBand --forceExit",
     "testuser": "jest --runInBand --detectOpenHandles --forceExit ./tests/users.spec.ts",
-    "testauth": "jest --runInBand --detectOpenHandles --forceExit ./tests/auth.spec.ts"
+    "testauth": "jest --runInBand --detectOpenHandles --forceExit ./tests/auth.spec.ts",
+    "testcomment": "jest --runInBand --detectOpenHandles --forceExit ./tests/comments.spec.ts"
   },
   "authors": [
     "Yael Abbo",
