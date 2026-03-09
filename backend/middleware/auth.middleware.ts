@@ -1,9 +1,9 @@
-import type { Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { sendError } from '../utils';
-import type { AuthenticatedRequest, TokenPayload } from '../types/auth';
+import type { TokenPayload } from '../types/auth';
 
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
   const authHeaders = req.headers['authorization'];
   const token = authHeaders && authHeaders.split(' ')[1];
