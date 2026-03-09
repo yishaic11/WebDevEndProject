@@ -4,6 +4,7 @@ import { Signup } from './pages/Signup';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { MainLayout } from './layouts/MainLayout';
 import { ProtectedRoute } from './components/Common/ProtectedRoute';
+import { ProfilePage } from './pages/ProfilePage';
 
 function App() {
   return (
@@ -34,7 +35,9 @@ function App() {
           path='/profile'
           element={
             <ProtectedRoute>
-              <MainLayout>Profile screen coming soon... </MainLayout>
+              <MainLayout>
+                <ProfilePage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
