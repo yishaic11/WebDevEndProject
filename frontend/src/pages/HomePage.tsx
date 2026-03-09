@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, CircularProgress, Fab, Zoom } from '@mui/material';
 import { KeyboardArrowUp } from '@mui/icons-material';
 import { PostCard } from '../components/Posts/PostCard';
@@ -8,11 +8,16 @@ import { postsApi } from '../api/posts.api';
 import { usersApi } from '../api/users.api';
 import { useLocation } from 'react-router-dom';
 
+const RENDERED_POSTS_COUNT_CHUNK_SIZE = 15;
+
 export const HomePage = () => {
   const location = useLocation();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [renderedPostsCount, setRenderedPostsCount] = useState(RENDERED_POSTS_COUNT_CHUNK_SIZE);
+
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -35,18 +40,19 @@ export const HomePage = () => {
           }),
         );
 
-        const mapped: Post[] = apiPosts.map((p) => ({
-          id: p._id,
-          senderId: p.senderId,
-          username: userMap[p.senderId]?.username ?? p.senderId,
-          userImage: userMap[p.senderId]?.photoUrl,
-          postImage: p.photoUrl ?? '',
-          caption: p.content,
-          likedBy: p.likes,
+        const mapped: Post[] = apiPosts.map((post) => ({
+          id: post._id,
+          senderId: post.senderId,
+          username: userMap[post.senderId]?.username ?? post.senderId,
+          userImage: userMap[post.senderId]?.photoUrl,
+          postImage: post.photoUrl ?? '',
+          caption: post.content,
+          likedBy: post.likes,
           commentsCount: 0,
         }));
 
-        setPosts(mapped);
+        setPosts(mapped.reverse());
+        setRenderedPostsCount(RENDERED_POSTS_COUNT_CHUNK_SIZE);
       } finally {
         setLoading(false);
       }
@@ -56,16 +62,30 @@ export const HomePage = () => {
   }, [location.key]);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setRenderedPostsCount((currentRenderedPostsCount) =>
+            Math.min(currentRenderedPostsCount + RENDERED_POSTS_COUNT_CHUNK_SIZE, posts.length),
+          );
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [posts.length]);
+
+  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
+      setShowScrollTop(window.scrollY > 400);
     };
 
     window.addEventListener('scroll', handleScroll);
-
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -75,6 +95,9 @@ export const HomePage = () => {
       behavior: 'smooth',
     });
   };
+
+  const visiblePosts = posts.slice(0, renderedPostsCount);
+  const hasPostsLeftToRender = renderedPostsCount < posts.length;
 
   return (
     <Box sx={{ width: '100%', position: 'relative' }}>
@@ -97,22 +120,33 @@ export const HomePage = () => {
           <CircularProgress sx={{ color: '#44A194' }} size={56} />
         </Box>
       ) : (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              md: 'repeat(2, 1fr)',
-              lg: 'repeat(3, 1fr)',
-            },
-            gap: '3vh',
-            width: '100%',
-          }}
-        >
-          {posts.map((post) => (
-            <PostCard key={post.id} {...post} />
-          ))}
-        </Box>
+        <>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(2, 1fr)',
+                lg: 'repeat(3, 1fr)',
+              },
+              gap: '3vh',
+              width: '100%',
+            }}
+          >
+            {visiblePosts.map((post) => (
+              <PostCard key={post.id} {...post} />
+            ))}
+          </Box>
+
+          {hasPostsLeftToRender && (
+            <div
+              ref={observerTarget}
+              style={{ height: '20px', margin: '20px 0', display: 'flex', justifyContent: 'center' }}
+            >
+              <CircularProgress sx={{ color: '#44A194' }} size={42} />
+            </div>
+          )}
+        </>
       )}
 
       <Zoom in={showScrollTop}>

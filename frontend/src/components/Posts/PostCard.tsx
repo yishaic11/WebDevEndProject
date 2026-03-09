@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Paper, Box, Typography, Avatar, IconButton } from '@mui/material';
 import { Favorite, FavoriteBorder, ChatBubbleOutline } from '@mui/icons-material';
 import { postsApi } from '../../api/posts.api';
@@ -12,14 +12,28 @@ interface PostProps {
   postImage: string;
   caption: string;
   likedBy: string[];
+  commentsCount: number;
 }
 
 export const PostCard = (props: PostProps) => {
-  const { id, username, userImage, postImage, caption, likedBy } = props;
+  const { id, username, userImage, postImage, caption, likedBy, commentsCount: initialCommentsCount } = props;
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(() => (user?.id ? likedBy.includes(user.id) : false));
   const [likes, setLikes] = useState(likedBy.length);
+  const [commentsCount, setCommentsCount] = useState(initialCommentsCount);
 
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const comments = []; // Placeholder for fetching comments related to the post. Implement when comments API is ready.
+
+        setCommentsCount(comments.length);
+      } catch {}
+    };
+
+    void fetchCount();
+  }, [id]);
+  
   const handleLike = async () => {
     const wasLiked = isLiked;
     setIsLiked(!wasLiked);
@@ -57,10 +71,7 @@ export const PostCard = (props: PostProps) => {
           </Typography>
         </Box>
 
-        <Box
-          onClick={() => {}}
-          sx={{ width: '100%', height: '50vh', overflow: 'hidden', cursor: 'pointer' }}
-        >
+        <Box onClick={() => {}} sx={{ width: '100%', height: '50vh', overflow: 'hidden', cursor: 'pointer' }}>
           <img src={postImage} alt='Post' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </Box>
 
@@ -82,6 +93,13 @@ export const PostCard = (props: PostProps) => {
               {username}
             </Box>
             {displayCaption}
+          </Typography>
+
+          <Typography
+            onClick={() => {}}
+            sx={{ color: 'gray', fontSize: '1.5vh', mt: '1vh', cursor: 'pointer', '&:hover': { color: '#44A194' } }}
+          >
+            View all {commentsCount} comments
           </Typography>
         </Box>
       </Paper>
