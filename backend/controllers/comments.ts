@@ -15,7 +15,10 @@ export const createComment = async (
     const senderId = getActiveUserId(req);
 
     const post = await Post.findById(newCommentData.postId);
-    if (!post) sendError(res, 404, `Post not found for Id: ${newCommentData.postId}`);
+    if (!post) {
+      return sendError(res, 404, `Post not found for Id: ${newCommentData.postId}`);
+    }
+
     const comment = await Comment.create({ ...newCommentData, senderId });
 
     res.status(201).json(comment);
@@ -39,8 +42,9 @@ export const getCommentById = async (req: Request<IdParam>, res: Response): Prom
 
   try {
     const comment = await Comment.findById(id);
-    if (!comment) throw new Error(`Comment not found for id: ${id}`);
-
+    if (!comment) {
+      return sendError(res, 404, `Comment not found for id: ${id}`);
+    }
     res.json(comment);
   } catch {
     sendError(res, 500, `Failed to get comment with id: ${id}`);
@@ -52,7 +56,9 @@ export const getCommentsByPostId = async (req: Request<IdParam>, res: Response):
 
   try {
     const post = await Post.findById(postId);
-    if (!post) sendError(res, 404, `Post not found for Id: ${postId}`);
+    if (!post) {
+      return sendError(res, 404, `Post not found for Id: ${postId}`);
+    }
 
     const comments = await Comment.find({ postId });
 
@@ -71,9 +77,7 @@ export const updateComment = async (req: Request<IdParam, unknown, UpdateComment
 
     const comments = await Comment.find({ _id: id, senderId: activeUserId });
     if (comments.length === 0) {
-      const message = `Comment not found for id: ${id} or user is not the sender`;
-      res.status(404).json({ message });
-      throw new Error(message);
+      return sendError(res, 404, `Comment not found for id: ${id} or user is not the sender`);
     }
 
     const comment = comments[0];
@@ -94,9 +98,7 @@ export const deleteComment = async (req: Request<IdParam>, res: Response): Promi
 
     const comments = await Comment.find({ _id: id, senderId: activeUserId });
     if (comments.length === 0) {
-      const message = `Comment not found for id: ${id} or user is not the sender`;
-      res.status(404).json({ message });
-      throw new Error(message);
+      return sendError(res, 404, `Comment not found for id: ${id} or user is not the sender`);
     }
 
     const comment = comments[0];
