@@ -3,7 +3,8 @@ import { type Express } from 'express';
 import mongoose from 'mongoose';
 import initApp from '../index';
 import Post, { type IPost } from '../models/post';
-import { registerTestUser, userData, createTestPost } from './testUtils';
+import { registerTestUser, userData, createTestPost, createTestComment } from './testUtils';
+import Comment from '../models/post';
 
 let app: Express;
 
@@ -232,6 +233,21 @@ describe('Posts Controller Integration', () => {
         .delete(`/posts/${otherPost._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(404);
+    });
+
+    it('should delete post and its comments if user is sender', async () => {
+      const post = await createTestPost(userData._id, 'Delete Me');
+      await createTestComment(post._id.toString(), userData._id, 'Delete this too');
+
+      await request(app)
+        .delete(`/posts/${post._id.toString()}`)
+        .set('Authorization', `Bearer ${userData.accessToken}`)
+        .expect(200);
+
+      const comments = await Comment.find({ postId: post._id });
+      expect(comments.length).toEqual(0);
+      const postCheck = await Post.findById(post._id);
+      expect(postCheck).toBeNull();
     });
   });
 });

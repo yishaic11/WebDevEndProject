@@ -5,6 +5,7 @@ import { getActiveUserId } from '../utils/auth';
 import type { IdParam } from '../types/common';
 import type { AuthenticatedRequest } from '../types/auth';
 import { sendError } from '../utils';
+import Post from '../models/post';
 
 export const createComment = async (
   req: AuthenticatedRequest<Record<string, string>, unknown, CreateCommentDto>,
@@ -14,7 +15,8 @@ export const createComment = async (
   try {
     const senderId = getActiveUserId(req);
 
-    //TODO - validate postId exists before querying
+    const post = await Post.findById(newCommentData.postId);
+    if (!post) sendError(res, 404, `Post not found for Id: ${newCommentData.postId}`);
     const comment = await Comment.create({ ...newCommentData, senderId });
 
     res.status(201).json(comment);
@@ -50,7 +52,9 @@ export const getCommentsByPostId = async (req: Request<IdParam>, res: Response):
   const { id: postId } = req.params;
 
   try {
-    //TODO - validate postId exists before querying
+    const post = await Post.findById(postId);
+    if (!post) sendError(res, 404, `Post not found for Id: ${postId}`);
+
     const comments = await Comment.find({ postId });
 
     res.json(comments);
