@@ -2,18 +2,17 @@ import fs from 'fs';
 
 import { GoogleGenAI } from '@google/genai';
 import type { Request, Response } from 'express';
+import { sendError } from '../utils';
 
 export const generateDescription = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      res.status(400).json({ message: 'No image provided. Please upload a photo.' });
-      return;
+      return sendError(res, 400, 'No image provided. Please upload a photo.');
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      res.status(500).json({ message: 'Gemini API key is not configured.' });
-      return;
+      return sendError(res, 500, 'Gemini API key is not configured.');
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -41,9 +40,10 @@ export const generateDescription = async (req: Request, res: Response): Promise<
 
     res.status(200).json({ description });
   } catch (error) {
-    res.status(500).json({
-      message: 'Failed to generate description',
-      error: error instanceof Error ? error.message : String(error),
-    });
+    sendError(
+      res,
+      500,
+      'Failed to generate description, details: ' + (error instanceof Error ? error.message : String(error)),
+    );
   }
 };
