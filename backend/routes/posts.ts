@@ -9,7 +9,7 @@ import {
   toggleLike,
 } from '../controllers/posts';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { uploadPostImage } from '../utils/storage';
+import { postImageMiddleware } from '../middleware/upload.middleware';
 
 const router: Router = Router();
 
@@ -19,9 +19,9 @@ router.get('/:id', authMiddleware, getPostById);
 
 router.get('/', authMiddleware, getPostsBySenderId);
 
-router.post('/', authMiddleware, uploadPostImage.single('photo'), createPost);
+router.post('/', authMiddleware, postImageMiddleware, createPost);
 
-router.put('/:id', authMiddleware, uploadPostImage.single('photo'), updatePost);
+router.put('/:id', authMiddleware, postImageMiddleware, updatePost);
 
 router.patch('/like', authMiddleware, toggleLike);
 
