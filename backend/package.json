@@ -11,7 +11,8 @@
     "test:coverage": "jest --coverage --runInBand --forceExit",
     "testuser": "jest --runInBand --detectOpenHandles --forceExit ./tests/users.spec.ts",
     "testauth": "jest --runInBand --detectOpenHandles --forceExit ./tests/auth.spec.ts",
-    "testcomment": "jest --runInBand --detectOpenHandles --forceExit ./tests/comments.spec.ts"
+    "testcomment": "jest --runInBand --detectOpenHandles --forceExit ./tests/comments.spec.ts",
+    "testpost": "jest --runInBand --detectOpenHandles --forceExit ./tests/posts.spec.ts"
   },
   "authors": [
     "Yael Abbo",
