@@ -44,3 +44,9 @@ export const uploadProfileImage = multer({
   fileFilter: imageFilter,
   limits: { fileSize: MAX_SIZE },
 });
+
+export const uploadTempImage = multer({
+  storage: createStorage('temp'),
+  fileFilter: imageFilter,
+  limits: { fileSize: MAX_SIZE },
+});
