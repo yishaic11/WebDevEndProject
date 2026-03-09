@@ -39,14 +39,14 @@ describe('Posts Controller Integration', () => {
       const response = await request(app)
         .post('/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
-        .send({
-          content: 'Hello World',
-        })
+        .field('content', 'Hello World')
+        .attach('photo', pngBuffer, 'post.png')
         .expect(200);
 
       const post = response.body as IPost;
       expect(post.content).toEqual('Hello World');
       expect(post.senderId).toEqual(userData._id);
+      expect(post.photoUrl).toBeDefined();
     });
 
     it('should create a post with a photo', async () => {
@@ -64,16 +64,12 @@ describe('Posts Controller Integration', () => {
       expect(body.photoUrl).toMatch(/\/public\/uploads\/posts\//);
     });
 
-    it('should create a post without a photo', async () => {
-      const res = await request(app)
+    it('should return 400 when creating a post without a photo', async () => {
+      await request(app)
         .post('/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'Text only post' })
-        .expect(200);
-
-      const noPhotoBody = res.body as PostResponseBody;
-      expect(noPhotoBody.content).toBe('Text only post');
-      expect(noPhotoBody.photoUrl).toBeUndefined();
+        .expect(400);
     });
   });
 
@@ -117,8 +113,7 @@ describe('Posts Controller Integration', () => {
   describe('GET /posts (By Sender)', () => {
     it('should filter posts by senderId', async () => {
       await createTestPost(userData._id, 'My Post');
-
-      await Post.create({ senderId: fakeId, content: 'Other Post' });
+      await createTestPost(fakeId, 'Other Post');
 
       const response = await request(app)
         .get(`/posts?sender=${userData._id}`)
@@ -148,8 +143,22 @@ describe('Posts Controller Integration', () => {
       expect(updatedPost.content).toEqual('New Content');
     });
 
+    it('should update a post without providing a photoUrl', async () => {
+      const post = await createTestPost(userData._id, 'Update Me');
+
+      const response = await request(app)
+        .put(`/posts/${post._id.toString()}`)
+        .set('Authorization', `Bearer ${userData.accessToken}`)
+        .send({ content: 'Updated Text Only' })
+        .expect(200);
+
+      const updatedPost = response.body as IPost;
+      expect(updatedPost.content).toEqual('Updated Text Only');
+      expect(updatedPost.photoUrl).toEqual(post.photoUrl);
+    });
+
     it('should return 404 if active user is not the sender', async () => {
-      const otherUserPost = await Post.create({ senderId: fakeId, content: 'Not Mine' });
+      const otherUserPost = await createTestPost(fakeId, 'Not Mine');
 
       await request(app)
         .put(`/posts/${otherUserPost._id.toString()}`)
@@ -162,7 +171,8 @@ describe('Posts Controller Integration', () => {
       const createRes = await request(app)
         .post('/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
-        .send({ content: 'Original content' })
+        .field('content', 'Original content')
+        .attach('photo', pngBuffer, 'post.png')
         .expect(200);
 
       const postId = (createRes.body as { _id: string })._id;
@@ -216,7 +226,7 @@ describe('Posts Controller Integration', () => {
 
   describe('DELETE /posts/:id', () => {
     it('should fail deletion if user is not the owner', async () => {
-      const otherPost = await Post.create({ senderId: fakeId, content: 'Owner is fakeId' });
+      const otherPost = await createTestPost(fakeId, 'Owner is fakeId');
 
       await request(app)
         .delete(`/posts/${otherPost._id.toString()}`)

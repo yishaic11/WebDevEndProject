@@ -21,11 +21,13 @@ export const createPost = async (
   try {
     const senderId = getActiveUserId(req);
 
-    let photoUrl: string | undefined;
+    let photoUrl: string;
     if (req.file) {
       const base = getBaseUrl();
       const filePath = req.file.path.replace(/\\/g, '/');
       photoUrl = `${base}${filePath}`;
+    } else {
+      return sendError(res, 400, 'Photo is required to create a post');
     }
 
     const createdPost = await Post.create({
