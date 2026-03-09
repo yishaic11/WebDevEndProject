@@ -6,7 +6,11 @@ import { getActiveUserId } from '../utils/auth';
 import { getBaseUrl } from '../utils/url';
 import { sendError } from '../utils';
 import type { AuthenticatedRequest } from '../types/auth';
-import type { IdParam, PostsSenderIDQueryParam } from '../types/common';
+import type { IdParam } from '../types/common';
+
+interface PostsSenderIDQueryParam {
+  sender?: string;
+}
 
 export const createPost = async (
   req: AuthenticatedRequest<Record<string, string>, unknown, CreatePostDto>,
@@ -96,7 +100,7 @@ export const updatePost = async (
     }
     const post = posts[0];
 
-    post.content = content;
+    post.content = content ? content : post.content;
 
     if (req.file) {
       const base = getBaseUrl();
