@@ -119,8 +119,8 @@ describe('Comments Controller Integration Tests', () => {
       expect(commentData.senderId).toEqual(userData._id);
     });
 
-    it('should return 500 for a non-existent but valid format ID', async () => {
-      await request(app).get(`/comments/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(500);
+    it('should return 404 for a non-existent but valid format ID', async () => {
+      await request(app).get(`/comments/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(404);
     });
   });
 
