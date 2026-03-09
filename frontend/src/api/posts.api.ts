@@ -4,11 +4,10 @@ import api from './axios';
 export const postsApi = {
   create: async (payload: CreatePostPayload): Promise<ApiPost> => {
     const formData = new FormData();
-    formData.append('content', payload.content);
+    const { content, photo } = payload;
 
-    if (payload.photo) {
-      formData.append('photo', payload.photo);
-    }
+    formData.append('content', content);
+    formData.append('photo', photo);
 
     const { data } = await api.post<ApiPost>('/posts', formData);
 
