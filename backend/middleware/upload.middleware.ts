@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { uploadPostImage, uploadProfileImage } from '../utils';
+import { uploadPostImage, uploadProfileImage, uploadTempImage } from '../utils';
 
 export const postImageMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const upload = uploadPostImage.single('photo');
@@ -9,10 +9,8 @@ export const postImageMiddleware = (req: Request, res: Response, next: NextFunct
       if (err instanceof Error) {
         return res.status(400).json({ error: `Upload post image error: ${err.message}` });
       }
-
       return res.status(400).json({ error: 'An unknown upload error occurred.' });
     }
-
     next();
   });
 };
@@ -25,10 +23,22 @@ export const profileImageMiddleware = (req: Request, res: Response, next: NextFu
       if (err instanceof Error) {
         return res.status(400).json({ error: `Upload profile image error: ${err.message}` });
       }
-
       return res.status(400).json({ error: 'An unknown upload error occurred.' });
     }
+    next();
+  });
+};
 
+export const tempImageMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const upload = uploadTempImage.single('photo');
+
+  upload(req, res, (err: unknown) => {
+    if (err) {
+      if (err instanceof Error) {
+        return res.status(400).json({ error: `Upload temp image error: ${err.message}` });
+      }
+      return res.status(400).json({ error: 'An unknown upload error occurred.' });
+    }
     next();
   });
 };
