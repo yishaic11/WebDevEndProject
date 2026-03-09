@@ -5,7 +5,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   photoUrl?: string;
-  googleId?: string; //TODO: implement google auth
+  googleId?: string;
   refreshTokens: string[];
 }
 
