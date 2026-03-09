@@ -1,5 +1,7 @@
-import { Router } from 'express';
-import { register, login, logout, refreshToken, getCurrentUser } from '../controllers/auth';
+import { Router, type RequestHandler } from 'express';
+import passport from 'passport';
+
+import { register, login, logout, refreshToken, getCurrentUser, oauthCallback } from '../controllers/auth';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { profileImageMiddleware } from '../middleware/upload.middleware';
 
@@ -8,6 +10,17 @@ const router: Router = Router();
 router.post('/register', profileImageMiddleware, register);
 
 router.get('/me', authMiddleware, getCurrentUser);
+
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false }) as RequestHandler,
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login', session: false }) as RequestHandler,
+  oauthCallback,
+);
 
 router.post('/login', login);
 

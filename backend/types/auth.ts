@@ -1,7 +1,5 @@
 import type { AuthTokensDto } from '../dtos/auth.dto';
 import type { JwtPayload } from 'jsonwebtoken';
-import type { Request } from 'express';
-import type { ParamsDictionary } from 'express-serve-static-core';
 
 export interface TokenPayload extends JwtPayload {
   _id: string;
@@ -9,10 +7,9 @@ export interface TokenPayload extends JwtPayload {
 
 export type AuthTokensDtoWithId = AuthTokensDto & { _id: string };
 
-export interface AuthenticatedRequest<P = ParamsDictionary, ResBody = unknown, ReqBody = unknown> extends Request<
-  P,
-  ResBody,
-  ReqBody
-> {
-  user?: TokenPayload | string;
+// Augment the core Express module directly to avoid the namespace ESLint error
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: TokenPayload | string;
+  }
 }
