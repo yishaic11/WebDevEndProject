@@ -163,7 +163,6 @@ export const UserPosts = () => {
       setIsEditOpen(false);
       handleMenuClose();
     } catch {
-      // handle error silently
     }
   };
 
@@ -177,7 +176,6 @@ export const UserPosts = () => {
       setIsDeleteOpen(false);
       handleMenuClose();
     } catch {
-      // handle error silently
     }
   };
 
@@ -257,7 +255,7 @@ export const UserPosts = () => {
             <Box
               ref={observerTarget}
               sx={{
-                gridColumn: '1 / -1', // This is the magic line!
+                gridColumn: '1 / -1',
                 height: '20px',
                 margin: '20px 0',
                 display: 'flex',
