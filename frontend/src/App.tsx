@@ -5,6 +5,7 @@ import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { MainLayout } from './layouts/MainLayout';
 import { ProtectedRoute } from './components/Common/ProtectedRoute';
 import { ProfilePage } from './pages/ProfilePage';
+import { HomePage } from './pages/HomePage';
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           path='/home'
           element={
             <ProtectedRoute>
-              <MainLayout>Home screen coming soon... </MainLayout>
+              <MainLayout>
+                <HomePage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
