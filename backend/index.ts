@@ -10,6 +10,7 @@ import { initPassport } from './config/passport';
 import postsRouter from './routes/posts';
 import aiRouter from './routes/ai';
 import commentsRouter from './routes/comments';
+import { specs, swaggerUi } from './swagger';
 
 dotenv.config({ path: '../.env' });
 const app: Express = express();
@@ -36,6 +37,21 @@ const initApp = () => {
     app.use('/users', usersRouter);
     app.use('/posts', postsRouter);
     app.use('/comments', commentsRouter);
+
+    // Swagger Documentation
+    app.use(
+      '/api-docs',
+      swaggerUi.serve,
+      swaggerUi.setup(specs, {
+        explorer: true,
+        customCss: '.swagger-ui .topbar { display: none }',
+        customSiteTitle: 'API Documentation - Connect Web App',
+      }),
+    );
+    app.get('/api-docs.json', (req, res) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.send(specs);
+    });
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
