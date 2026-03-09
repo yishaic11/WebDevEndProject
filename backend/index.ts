@@ -7,6 +7,7 @@ import authRouter from './routes/auth';
 import usersRouter from './routes/users';
 import passport from 'passport';
 import { initPassport } from './config/passport';
+import postsRouter from './routes/posts';
 
 dotenv.config({ path: '../.env' });
 const app: Express = express();
@@ -30,6 +31,7 @@ const initApp = () => {
 
     app.use('/auth', authRouter);
     app.use('/users', usersRouter);
+    app.use('/posts', postsRouter);
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
