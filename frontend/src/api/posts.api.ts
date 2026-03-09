@@ -1,4 +1,4 @@
-import type { ApiPost, UpdatePostPayload } from '../types/post.types';
+import type { ApiPost, CreatePostPayload, UpdatePostPayload } from '../types/post.types';
 import api from './axios';
 
 export const postsApi = {
@@ -16,6 +16,18 @@ export const postsApi = {
 
   getById: async (id: string): Promise<ApiPost> => {
     const { data } = await api.get<ApiPost>(`/posts/${id}`);
+
+    return data;
+  },
+
+  create: async (payload: CreatePostPayload): Promise<ApiPost> => {
+    const formData = new FormData();
+    const { content, photo } = payload;
+
+    formData.append('content', content);
+    formData.append('photo', photo);
+
+    const { data } = await api.post<ApiPost>('/posts', formData);
 
     return data;
   },

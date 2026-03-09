@@ -6,6 +6,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { ProtectedRoute } from './components/Common/ProtectedRoute';
 import { ProfilePage } from './pages/ProfilePage';
 import { HomePage } from './pages/HomePage';
+import { CreatePostPage } from './pages/CreatePostPage';
 
 function App() {
   return (
@@ -30,7 +31,9 @@ function App() {
           path='/create'
           element={
             <ProtectedRoute>
-              <MainLayout>Create post screen coming soon... </MainLayout>
+              <MainLayout>
+                <CreatePostPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
