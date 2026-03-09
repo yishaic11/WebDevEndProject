@@ -1,12 +1,7 @@
 import type { Request, Response } from 'express';
-import type { ParamsDictionary } from 'express-serve-static-core';
 import type { UpdateUserDto, UserResponseDto } from '../dtos/user.dto';
 import { getActiveUserId, getBaseUrl, sendError } from '../utils';
-import User from '../models/user';
-
-interface IdParam extends ParamsDictionary {
-  id: string;
-}
+import type { IdParam } from '../types/common';
 
 export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
