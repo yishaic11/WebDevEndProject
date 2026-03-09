@@ -3,19 +3,41 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { MainLayout } from './layouts/MainLayout';
+import { ProtectedRoute } from './components/Common/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Navigate to='/login' replace />} />
+        <Route path='/' element={<Navigate to='/home' replace />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/oauth-callback' element={<OAuthCallbackPage />} />
 
-        <Route path='/home' element={<MainLayout>Home screen coming soon... </MainLayout>} />
-        <Route path='/create' element={<MainLayout>Create post screen coming soon... </MainLayout>} />
-        <Route path='/profile' element={<MainLayout>Profile screen coming soon... </MainLayout>} />
+        <Route
+          path='/home'
+          element={
+            <ProtectedRoute>
+              <MainLayout>Home screen coming soon... </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/create'
+          element={
+            <ProtectedRoute>
+              <MainLayout>Create post screen coming soon... </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <MainLayout>Profile screen coming soon... </MainLayout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

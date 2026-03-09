@@ -1,9 +1,8 @@
 import type { Request, Response } from 'express';
 import type { UpdateUserDto, UserResponseDto } from '../dtos/user.dto';
-import type { AuthenticatedRequest } from '../types/auth';
-import User from '../models/user';
 import { getActiveUserId, getBaseUrl, sendError } from '../utils';
 import type { IdParam } from '../types/common';
+import User from '../models/user';
 
 export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
   try {
@@ -41,10 +40,7 @@ export const getUserById = async (req: Request<IdParam>, res: Response): Promise
   }
 };
 
-export const updateUser = async (
-  req: AuthenticatedRequest<IdParam, unknown, UpdateUserDto>,
-  res: Response,
-): Promise<void> => {
+export const updateUser = async (req: Request<IdParam, unknown, UpdateUserDto>, res: Response): Promise<void> => {
   const senderId = getActiveUserId(req);
   const { id: userId } = req.params;
 
@@ -78,7 +74,7 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (req: AuthenticatedRequest<IdParam>, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request<IdParam>, res: Response): Promise<void> => {
   const senderId = getActiveUserId(req);
   const { id: userId } = req.params;
 

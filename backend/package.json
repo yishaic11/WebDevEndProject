@@ -26,6 +26,8 @@
     "mongoose": "^9.0.1",
     "typescript-eslint": "^8.56.1",
     "multer": "^2.0.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "jsonwebtoken": "^9.0.3",
     "bcrypt": "^6.0.0"
   },
@@ -39,6 +41,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "@types/multer": "^2.0.0",
+    "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.17",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/bcrypt": "^6.0.0",
     "@types/supertest": "^6.0.3"
