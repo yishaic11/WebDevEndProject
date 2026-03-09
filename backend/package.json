@@ -33,7 +33,9 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "jsonwebtoken": "^9.0.3",
-    "bcrypt": "^6.0.0"
+    "bcrypt": "^6.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -49,6 +51,8 @@
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/bcrypt": "^6.0.0",
-    "@types/supertest": "^6.0.3"
+    "@types/supertest": "^6.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8"
   }
 }
