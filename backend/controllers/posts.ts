@@ -1,11 +1,10 @@
-import { type Request, type Response } from 'express';
+import type { Request, Response } from 'express';
 import Post from '../models/post';
 import { type CreatePostDto, type LikePostDto, type UpdatePostDto } from '../dtos/post.dto';
 import { handlePostLikeToggle } from '../utils/likes';
 import { getActiveUserId } from '../utils/auth';
 import { getBaseUrl } from '../utils/url';
 import { sendError } from '../utils';
-import type { AuthenticatedRequest } from '../types/auth';
 import type { IdParam } from '../types/common';
 
 interface PostsSenderIDQueryParam {
@@ -13,7 +12,7 @@ interface PostsSenderIDQueryParam {
 }
 
 export const createPost = async (
-  req: AuthenticatedRequest<Record<string, string>, unknown, CreatePostDto>,
+  req: Request<Record<string, string>, unknown, CreatePostDto>,
   res: Response,
 ): Promise<void> => {
   const { content } = req.body;
@@ -86,10 +85,7 @@ export const getPostsBySenderId = async (
   }
 };
 
-export const updatePost = async (
-  req: AuthenticatedRequest<IdParam, unknown, UpdatePostDto>,
-  res: Response,
-): Promise<void> => {
+export const updatePost = async (req: Request<IdParam, unknown, UpdatePostDto>, res: Response): Promise<void> => {
   const { id } = req.params;
   const { content } = req.body;
 
@@ -119,7 +115,7 @@ export const updatePost = async (
 };
 
 export const toggleLike = async (
-  req: AuthenticatedRequest<Record<string, string>, unknown, LikePostDto>,
+  req: Request<Record<string, string>, unknown, LikePostDto>,
   res: Response,
 ): Promise<void> => {
   const { postId } = req.body;
@@ -134,7 +130,7 @@ export const toggleLike = async (
   }
 };
 
-export const deletePost = async (req: AuthenticatedRequest<IdParam>, res: Response): Promise<void> => {
+export const deletePost = async (req: Request<IdParam>, res: Response): Promise<void> => {
   const { id } = req.params;
 
   try {
