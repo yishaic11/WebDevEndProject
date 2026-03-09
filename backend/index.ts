@@ -8,6 +8,7 @@ import usersRouter from './routes/users';
 import passport from 'passport';
 import { initPassport } from './config/passport';
 import postsRouter from './routes/posts';
+import aiRouter from './routes/ai';
 import commentsRouter from './routes/comments';
 
 dotenv.config({ path: '../.env' });
@@ -30,6 +31,7 @@ const initApp = () => {
 
     app.use('/public', express.static(path.join(process.cwd(), 'public')));
 
+    app.use('/api/ai', aiRouter);
     app.use('/auth', authRouter);
     app.use('/users', usersRouter);
     app.use('/posts', postsRouter);
