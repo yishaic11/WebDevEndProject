@@ -6,6 +6,7 @@ import { getActiveUserId } from '../utils/auth';
 import { getBaseUrl } from '../utils/url';
 import { sendError } from '../utils';
 import type { IdParam } from '../types/common';
+import Comment from '../models/post';
 
 interface PostsSenderIDQueryParam {
   sender?: string;
@@ -144,7 +145,7 @@ export const deletePost = async (req: Request<IdParam>, res: Response): Promise<
     }
     const post = posts[0];
 
-    // TODO: Delete all comments of the deleted post once comments are implemented
+    await Comment.deleteMany({ postId: id });
     await post.deleteOne();
 
     res.json(post);

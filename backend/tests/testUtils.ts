@@ -4,6 +4,7 @@ import type { Express } from 'express';
 import request from 'supertest';
 import type { UserResponseDto } from '../dtos/user.dto';
 import type { AuthTokensDtoWithId } from '../types/auth';
+import Comment from '../models/comment';
 
 export const userData = {
   email: 'test@gmail.com',
@@ -55,4 +56,14 @@ export const registerTestUser = async (app: Express) => {
   }
 
   return userData;
+};
+
+export const createTestComment = async (postId: string, senderId: string, content?: string) => {
+  const comment = await Comment.create({
+    postId,
+    senderId,
+    content: content || 'Test comment content',
+  });
+
+  return comment;
 };

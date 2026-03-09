@@ -9,6 +9,7 @@ import passport from 'passport';
 import { initPassport } from './config/passport';
 import postsRouter from './routes/posts';
 import aiRouter from './routes/ai';
+import commentsRouter from './routes/comments';
 
 dotenv.config({ path: '../.env' });
 const app: Express = express();
@@ -34,6 +35,7 @@ const initApp = () => {
     app.use('/auth', authRouter);
     app.use('/users', usersRouter);
     app.use('/posts', postsRouter);
+    app.use('/comments', commentsRouter);
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
