@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { ProfileHeader } from '../components/Profile/ProfileHeader';
+import { UserPosts } from '../components/Profile/UserPosts';
 import { EditProfileModal } from '../components/Profile/EditProfileModal';
 import defaultImg from '../assets/default-profile-image.png';
 import { Toast } from '../components/Common/Toast';
 import type { AlertColor } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { usersApi } from '../api/users.api';
-import { UserPosts } from '../components/Profile/UserPosts';
 
 export const ProfilePage = () => {
   const { user, updateUser } = useAuth();
