@@ -3,12 +3,11 @@ import Comment from '../models/comment';
 import type { CreateCommentDto, UpdateCommentDto } from '../dtos/comment.dto';
 import { getActiveUserId } from '../utils/auth';
 import type { IdParam } from '../types/common';
-import type { AuthenticatedRequest } from '../types/auth';
 import { sendError } from '../utils';
 import Post from '../models/post';
 
 export const createComment = async (
-  req: AuthenticatedRequest<Record<string, string>, unknown, CreateCommentDto>,
+  req: Request<Record<string, string>, unknown, CreateCommentDto>,
   res: Response,
 ): Promise<void> => {
   const newCommentData = req.body;
@@ -63,10 +62,7 @@ export const getCommentsByPostId = async (req: Request<IdParam>, res: Response):
   }
 };
 
-export const updateComment = async (
-  req: AuthenticatedRequest<IdParam, unknown, UpdateCommentDto>,
-  res: Response,
-): Promise<void> => {
+export const updateComment = async (req: Request<IdParam, unknown, UpdateCommentDto>, res: Response): Promise<void> => {
   const { id } = req.params;
   const { content } = req.body;
 
@@ -90,7 +86,7 @@ export const updateComment = async (
   }
 };
 
-export const deleteComment = async (req: AuthenticatedRequest<IdParam>, res: Response): Promise<void> => {
+export const deleteComment = async (req: Request<IdParam>, res: Response): Promise<void> => {
   const { id } = req.params;
 
   try {
