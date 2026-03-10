@@ -163,6 +163,7 @@ export const UserPosts = () => {
       setIsEditOpen(false);
       handleMenuClose();
     } catch {
+      // handle error silently
     }
   };
 
@@ -176,6 +177,7 @@ export const UserPosts = () => {
       setIsDeleteOpen(false);
       handleMenuClose();
     } catch {
+      // handle error silently
     }
   };
 
