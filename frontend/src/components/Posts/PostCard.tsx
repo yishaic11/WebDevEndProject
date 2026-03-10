@@ -3,6 +3,8 @@ import { Paper, Box, Typography, Avatar, IconButton } from '@mui/material';
 import { Favorite, FavoriteBorder, ChatBubbleOutline } from '@mui/icons-material';
 import { postsApi } from '../../api/posts.api';
 import { useAuth } from '../../hooks/useAuth';
+import { PostViewModal } from './PostViewModal';
+import { commentsApi } from '../../api/comments.api';
 
 interface PostProps {
   id: string;
@@ -21,19 +23,22 @@ export const PostCard = (props: PostProps) => {
   const [isLiked, setIsLiked] = useState(() => (user?.id ? likedBy.includes(user.id) : false));
   const [likes, setLikes] = useState(likedBy.length);
   const [commentsCount, setCommentsCount] = useState(initialCommentsCount);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const comments = []; // Placeholder for fetching comments related to the post. Implement when comments API is ready.
+        const comments = await commentsApi.getByPostId(id);
 
         setCommentsCount(comments.length);
-      } catch {}
+      } catch {
+        // handle error silently
+      }
     };
 
     void fetchCount();
   }, [id]);
-  
+
   const handleLike = async () => {
     const wasLiked = isLiked;
     setIsLiked(!wasLiked);
@@ -71,7 +76,10 @@ export const PostCard = (props: PostProps) => {
           </Typography>
         </Box>
 
-        <Box onClick={() => {}} sx={{ width: '100%', height: '50vh', overflow: 'hidden', cursor: 'pointer' }}>
+        <Box
+          onClick={() => setIsModalOpen(true)}
+          sx={{ width: '100%', height: '50vh', overflow: 'hidden', cursor: 'pointer' }}
+        >
           <img src={postImage} alt='Post' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </Box>
 
@@ -79,7 +87,7 @@ export const PostCard = (props: PostProps) => {
           <IconButton onClick={() => void handleLike()} sx={{ color: isLiked ? '#EC8F8D' : '#537D96' }}>
             {isLiked ? <Favorite sx={{ fontSize: '3vh' }} /> : <FavoriteBorder sx={{ fontSize: '3vh' }} />}
           </IconButton>
-          <IconButton onClick={() => {}} sx={{ color: '#537D96' }}>
+          <IconButton onClick={() => setIsModalOpen(true)} sx={{ color: '#537D96' }}>
             <ChatBubbleOutline sx={{ fontSize: '2.8vh' }} />
           </IconButton>
         </Box>
@@ -96,14 +104,23 @@ export const PostCard = (props: PostProps) => {
           </Typography>
 
           <Typography
-            onClick={() => {}}
+            onClick={() => setIsModalOpen(true)}
             sx={{ color: 'gray', fontSize: '1.5vh', mt: '1vh', cursor: 'pointer', '&:hover': { color: '#44A194' } }}
           >
             View all {commentsCount} comments
           </Typography>
         </Box>
       </Paper>
-      {/* // TODO: Implement PostViewModal once implemented */}
+      <PostViewModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        post={props}
+        isLiked={isLiked}
+        handleLike={() => void handleLike()}
+        likesCount={likes}
+        onCommentsLoaded={(count) => setCommentsCount(count)}
+        onCommentCountChange={(delta) => setCommentsCount((prev) => prev + delta)}
+      />
     </>
   );
 };
