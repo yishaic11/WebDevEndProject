@@ -28,19 +28,19 @@ const initApp = () => {
     initPassport();
     app.use(passport.initialize());
 
-    app.use('/coverage', express.static(path.join(process.cwd(), 'coverage/lcov-report')));
+    app.use('/api/coverage', express.static(path.join(process.cwd(), 'coverage/lcov-report')));
 
     app.use('/public', express.static(path.join(process.cwd(), 'public')));
 
     app.use('/api/ai', aiRouter);
-    app.use('/auth', authRouter);
-    app.use('/users', usersRouter);
-    app.use('/posts', postsRouter);
-    app.use('/comments', commentsRouter);
+    app.use('/api/auth', authRouter);
+    app.use('/api/users', usersRouter);
+    app.use('/api/posts', postsRouter);
+    app.use('/api/comments', commentsRouter);
 
     // Swagger Documentation
     app.use(
-      '/api-docs',
+      '/api/docs',
       swaggerUi.serve,
       swaggerUi.setup(specs, {
         explorer: true,
@@ -48,7 +48,7 @@ const initApp = () => {
         customSiteTitle: 'API Documentation - Connect Web App',
       }),
     );
-    app.get('/api-docs.json', (req, res) => {
+    app.get('/api/docs.json', (req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(specs);
     });
