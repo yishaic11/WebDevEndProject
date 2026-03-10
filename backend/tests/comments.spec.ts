@@ -25,7 +25,7 @@ beforeEach(async () => {
 describe('Comments Controller Integration Tests', () => {
   const fakeId = new mongoose.Types.ObjectId().toString();
 
-  describe('POST /comments', () => {
+  describe('POST /api/comments', () => {
     it('should create a new comment successfully', async () => {
       const post = await createTestPost(userData._id);
 
@@ -35,7 +35,7 @@ describe('Comments Controller Integration Tests', () => {
       };
 
       const response = await request(app)
-        .post('/comments')
+        .post('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send(commentData)
         .expect(201);
@@ -47,12 +47,12 @@ describe('Comments Controller Integration Tests', () => {
     });
 
     it('should return 401 if no authorization header is provided', async () => {
-      await request(app).post('/comments').send({ content: 'comment', postId: fakeId }).expect(401);
+      await request(app).post('/api/comments').send({ content: 'comment', postId: fakeId }).expect(401);
     });
 
     it('should return 404 if the postId does not exist', async () => {
       await request(app)
-        .post('/comments')
+        .post('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ postId: fakeId, content: 'Orphan comment' })
         .expect(404);
@@ -61,7 +61,7 @@ describe('Comments Controller Integration Tests', () => {
     it('should return 500 if validation fails (missing content)', async () => {
       const post = await createTestPost(userData._id);
       await request(app)
-        .post('/comments')
+        .post('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ postId: post._id })
         .expect(500);
@@ -70,21 +70,21 @@ describe('Comments Controller Integration Tests', () => {
     it('should return 500 if content is an empty string (schema validation)', async () => {
       const post = await createTestPost(userData._id);
       await request(app)
-        .post('/comments')
+        .post('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ postId: post._id, content: '' })
         .expect(500);
     });
   });
 
-  describe('GET /comments', () => {
+  describe('GET /api/comments', () => {
     it('should return all comments in the database', async () => {
       const post = await createTestPost(userData._id);
       await createTestComment(post._id.toString(), userData._id, 'C1');
       await createTestComment(post._id.toString(), userData._id, 'C2');
 
       const response = await request(app)
-        .get('/comments')
+        .get('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -95,7 +95,7 @@ describe('Comments Controller Integration Tests', () => {
 
     it('should return an empty array if no comments exist', async () => {
       const response = await request(app)
-        .get('/comments')
+        .get('/api/comments')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -103,13 +103,13 @@ describe('Comments Controller Integration Tests', () => {
     });
   });
 
-  describe('GET /comments/:id', () => {
+  describe('GET /api/comments/:id', () => {
     it('should return a specific comment by its ID', async () => {
       const post = await createTestPost(userData._id);
       const comment = await createTestComment(post._id.toString(), userData._id, 'Find me');
 
       const response = await request(app)
-        .get(`/comments/${comment._id.toString()}`)
+        .get(`/api/comments/${comment._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -120,11 +120,11 @@ describe('Comments Controller Integration Tests', () => {
     });
 
     it('should return 404 for a non-existent but valid format ID', async () => {
-      await request(app).get(`/comments/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(404);
+      await request(app).get(`/api/comments/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(404);
     });
   });
 
-  describe('GET /comments/post/:id', () => {
+  describe('GET /api/comments/post/:id', () => {
     it('should filter comments by the post ID', async () => {
       const post1 = await createTestPost(userData._id);
       const post2 = await createTestPost(userData._id);
@@ -132,7 +132,7 @@ describe('Comments Controller Integration Tests', () => {
       await createTestComment(post2._id.toString(), userData._id, 'Comment for P2');
 
       const response = await request(app)
-        .get(`/comments/post/${post1._id.toString()}`)
+        .get(`/api/comments/post/${post1._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -147,7 +147,7 @@ describe('Comments Controller Integration Tests', () => {
       const post = await createTestPost(userData._id);
 
       const response = await request(app)
-        .get(`/comments/post/${post._id.toString()}`)
+        .get(`/api/comments/post/${post._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -156,19 +156,19 @@ describe('Comments Controller Integration Tests', () => {
 
     it('should return 404 if searching comments for a non-existent post', async () => {
       await request(app)
-        .get(`/comments/post/${fakeId}`)
+        .get(`/api/comments/post/${fakeId}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(404);
     });
   });
 
-  describe('PUT /comments/:id', () => {
+  describe('PUT /api/comments/:id', () => {
     it('should update comment if active user is the sender', async () => {
       const post = await createTestPost(userData._id);
       const comment = await createTestComment(post._id.toString(), userData._id, 'Old text');
 
       const response = await request(app)
-        .put(`/comments/${comment._id.toString()}`)
+        .put(`/api/comments/${comment._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'New text' })
         .expect(200);
@@ -189,7 +189,7 @@ describe('Comments Controller Integration Tests', () => {
       });
 
       await request(app)
-        .put(`/comments/${otherComment._id.toString()}`)
+        .put(`/api/comments/${otherComment._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'attempt' })
         .expect(404);
@@ -199,17 +199,17 @@ describe('Comments Controller Integration Tests', () => {
       const postId = new mongoose.Types.ObjectId().toString();
       const comment = await createTestComment(postId, userData._id, 'Locked text');
 
-      await request(app).put(`/comments/${comment._id.toString()}`).send({ content: 'Unauthorized' }).expect(401);
+      await request(app).put(`/api/comments/${comment._id.toString()}`).send({ content: 'Unauthorized' }).expect(401);
     });
   });
 
-  describe('DELETE /comments/:id', () => {
+  describe('DELETE /api/comments/:id', () => {
     it('should delete a comment if active user is the sender', async () => {
       const post = await createTestPost(userData._id);
       const comment = await createTestComment(post._id.toString(), userData._id, 'Delete me');
 
       await request(app)
-        .delete(`/comments/${comment._id.toString()}`)
+        .delete(`/api/comments/${comment._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -226,7 +226,7 @@ describe('Comments Controller Integration Tests', () => {
       });
 
       await request(app)
-        .delete(`/comments/${otherComment._id.toString()}`)
+        .delete(`/api/comments/${otherComment._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(404);
 

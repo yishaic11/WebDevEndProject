@@ -32,7 +32,7 @@ export const registerTestUser = async (app: Express) => {
 
   const registerRes: {
     body: UserResponseDto;
-  } = await request(app).post('/auth/register').send({
+  } = await request(app).post('/api/auth/register').send({
     username: uniqueUsername,
     email: userData.email,
     password: userData.password,
@@ -40,7 +40,7 @@ export const registerTestUser = async (app: Express) => {
 
   const loginRes: {
     body: AuthTokensDtoWithId;
-  } = await request(app).post('/auth/login').send({
+  } = await request(app).post('/api/auth/login').send({
     username: uniqueUsername,
     password: userData.password,
   });
