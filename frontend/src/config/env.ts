@@ -15,4 +15,4 @@ const env: AppEnv = { ...buildEnv, ...runtimeEnv };
 
 delete window.injectedEnv;
 
-export const API_URL: string = env.VITE_API_URL ?? 'http://localhost:3000/api';
+export const API_URL: string = env.VITE_API_URL ?? 'https://localhost/api';
