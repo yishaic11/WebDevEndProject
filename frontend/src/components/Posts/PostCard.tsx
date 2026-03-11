@@ -68,7 +68,15 @@ export const PostCard = (props: PostProps) => {
         }}
       >
         <Box sx={{ p: '2vh', display: 'flex', alignItems: 'center', gap: '1.5vh' }}>
-          <Avatar src={userImage} sx={{ width: '5vh', height: '5vh', bgcolor: '#44A194' }}>
+          <Avatar
+            src={userImage}
+            sx={{ width: '5vh', height: '5vh', bgcolor: '#44A194' }}
+            slotProps={{
+              img: {
+                referrerPolicy: 'no-referrer',
+              },
+            }}
+          >
             {username[0]}
           </Avatar>
           <Typography fontWeight={800} sx={{ fontSize: '1.8vh', color: '#537D96' }}>

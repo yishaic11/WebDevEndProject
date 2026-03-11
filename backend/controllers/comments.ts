@@ -5,12 +5,21 @@ import { getActiveUserId } from '../utils/auth';
 import type { IdParam } from '../types/common';
 import { sendError } from '../utils';
 import Post from '../models/post';
+import type mongoose from 'mongoose';
+import User from '../models/user';
+
+interface PopulatedSender {
+  _id: mongoose.Types.ObjectId;
+  username: string;
+  photoUrl?: string;
+}
 
 export const createComment = async (
   req: Request<Record<string, string>, unknown, CreateCommentDto>,
   res: Response,
 ): Promise<void> => {
   const newCommentData = req.body;
+
   try {
     const senderId = getActiveUserId(req);
 
@@ -19,11 +28,23 @@ export const createComment = async (
       return sendError(res, 404, `Post not found for Id: ${newCommentData.postId}`);
     }
 
-    const comment = await Comment.create({ ...newCommentData, senderId });
+    const newComment = await Comment.create({ ...newCommentData, senderId });
 
-    res.status(201).json(comment);
-  } catch {
-    sendError(res, 500, `Failed to create comment with data: ${JSON.stringify(newCommentData)}`);
+    const user = await User.findById(senderId);
+
+    const responseData = {
+      _id: newComment._id.toString(),
+      content: newComment.content,
+      postId: newComment.postId.toString(),
+      senderId,
+      photoUrl: user?.photoUrl,
+      username: user?.username,
+    };
+
+    res.status(201).json(responseData);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    sendError(res, 500, `Failed to create comment: ${message}`);
   }
 };
 
@@ -60,7 +81,22 @@ export const getCommentsByPostId = async (req: Request<IdParam>, res: Response):
       return sendError(res, 404, `Post not found for Id: ${postId}`);
     }
 
-    const comments = await Comment.find({ postId });
+    const rawComments = await Comment.find({ postId })
+      .populate<{ senderId: PopulatedSender }>('senderId', 'photoUrl username')
+      .lean();
+
+    const comments = rawComments.map((comment) => {
+      const sender = comment.senderId;
+
+      return {
+        _id: comment._id,
+        content: comment.content,
+        postId: comment.postId.toString(),
+        senderId: sender._id.toString(),
+        photoUrl: sender?.photoUrl,
+        username: sender.username,
+      };
+    });
 
     res.json(comments);
   } catch {
