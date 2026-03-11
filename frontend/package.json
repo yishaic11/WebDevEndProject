@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prod": "npm run build && rm -rf ../backend/public/client-dist && mv dist ../backend/public/client-dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "start": "tsc -b && vite build && vite",
@@ -23,9 +24,7 @@
     "react-hook-form": "^7.71.2",
     "react-router-dom": "^7.13.1",
     "styled-components": "^6.3.8",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
+    "zod": "^4.3.6",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
@@ -35,8 +34,9 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^17.3.0",
-    "typescript": "~5.9.3",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"
-  }
+  },
+  "devDependencies": {}
 }
