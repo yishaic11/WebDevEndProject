@@ -18,7 +18,7 @@ const app: Express = express();
 const initApp = () => {
   const promise = new Promise<Express>((resolve, reject) => {
     app.use(bodyParser.json());
-    app.use(function (req, res, next) {
+    app.use(function (_req, res, next) {
       res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL ?? '*');
       res.header('Access-Control-Allow-Headers', '*');
       res.header('Access-Control-Allow-Methods', '*');
@@ -48,10 +48,23 @@ const initApp = () => {
         customSiteTitle: 'API Documentation - Connect Web App',
       }),
     );
-    app.get('/api/docs.json', (req, res) => {
+    app.get('/api/docs.json', (_req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(specs);
     });
+
+    const isProd = process.env.NODE_ENV === 'prod';
+
+    if (isProd) {
+      const reactBuildPath = path.join(process.cwd(), 'public/client-dist');
+      app.use(express.static(reactBuildPath));
+
+      app.get(/^(?!\/api).*$/, (_req, res) => {
+        res.sendFile(path.join(reactBuildPath, 'index.html'));
+      });
+
+      console.log('Serving React production build from /client-dist');
+    }
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
