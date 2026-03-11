@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "dist/app.js",
   "scripts": {
-    "prod": "cp .envprod .env && tsc -p tsconfig.prod.json && node dist/app.js",
+    "prod": "cp ../.envprod ../.env && tsc -p tsconfig.prod.json && node dist/app.js",
     "dev": "tsc && node --env-file=../.env dist/app.js",
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",
