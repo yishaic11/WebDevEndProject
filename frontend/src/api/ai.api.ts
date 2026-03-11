@@ -5,7 +5,7 @@ export const aiApi = {
     const formData = new FormData();
     formData.append('photo', photo);
 
-    const { data } = await api.post<{ description: string }>('/api/ai/generate', formData);
+    const { data } = await api.post<{ description: string }>('/ai/generate', formData);
 
     return data.description;
   },

@@ -32,7 +32,7 @@ describe('Auth Controller', () => {
     password: 'password123',
   };
 
-  describe('POST /auth/register', () => {
+  describe('POST /api/auth/register', () => {
     it('should register a new user with a profile photo URL', async () => {
       const pngBuffer = Buffer.from(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI6QAAAABJRU5ErkJggg==',
@@ -40,7 +40,7 @@ describe('Auth Controller', () => {
       );
 
       const response = await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .field('username', testUser.username)
         .field('email', testUser.email)
         .field('password', testUser.password)
@@ -58,28 +58,28 @@ describe('Auth Controller', () => {
 
     it('should fail if username already exists', async () => {
       await User.create({ ...testUser, password: 'hashed_password' });
-      const response = await request(app).post('/auth/register').send(testUser).expect(400);
+      const response = await request(app).post('/api/auth/register').send(testUser).expect(400);
       const error = response.body as ErrorResponse;
 
       expect(error.message).toEqual('Username or email already exists.');
     });
 
     it('should return 400 if fields are missing', async () => {
-      const response = await request(app).post('/auth/register').send({ username: 'no_email' }).expect(400);
+      const response = await request(app).post('/api/auth/register').send({ username: 'no_email' }).expect(400);
 
       const error = response.body as ErrorResponse;
       expect(error.message).toEqual('Username, email, and password are required.');
     });
   });
 
-  describe('POST /auth/login', () => {
+  describe('POST /api/auth/login', () => {
     beforeEach(async () => {
-      await request(app).post('/auth/register').send(testUser);
+      await request(app).post('/api/auth/register').send(testUser);
     });
 
     it('should login successfully and return tokens', async () => {
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({
           username: testUser.username,
           password: testUser.password,
@@ -93,7 +93,7 @@ describe('Auth Controller', () => {
 
     it('should fail with incorrect password', async () => {
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({ username: testUser.username, password: 'wrong_password' })
         .expect(400);
 
@@ -102,14 +102,14 @@ describe('Auth Controller', () => {
     });
 
     it('should return 400 when username field is missing', async () => {
-      const response = await request(app).post('/auth/login').send({ password: testUser.password }).expect(400);
+      const response = await request(app).post('/api/auth/login').send({ password: testUser.password }).expect(400);
 
       const error = response.body as ErrorResponse;
       expect(error.message).toEqual('Username and password are required.');
     });
 
     it('should return 400 when password field is missing', async () => {
-      const response = await request(app).post('/auth/login').send({ username: testUser.username }).expect(400);
+      const response = await request(app).post('/api/auth/login').send({ username: testUser.username }).expect(400);
 
       const error = response.body as ErrorResponse;
       expect(error.message).toEqual('Username and password are required.');
@@ -117,7 +117,7 @@ describe('Auth Controller', () => {
 
     it('should return 400 when user does not exist', async () => {
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({ username: 'nonexistent_user', password: 'password123' })
         .expect(400);
 
@@ -132,7 +132,7 @@ describe('Auth Controller', () => {
       });
 
       const response = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({ username: 'socialuser', password: 'anypassword' })
         .expect(400);
 
@@ -141,12 +141,12 @@ describe('Auth Controller', () => {
     });
   });
 
-  describe('POST /auth/refreshToken', () => {
+  describe('POST /api/auth/refreshToken', () => {
     let refreshToken: string;
 
     beforeEach(async () => {
-      await request(app).post('/auth/register').send(testUser);
-      const log = await request(app).post('/auth/login').send({
+      await request(app).post('/api/auth/register').send(testUser);
+      const log = await request(app).post('/api/auth/login').send({
         username: testUser.username,
         password: testUser.password,
       });
@@ -156,7 +156,7 @@ describe('Auth Controller', () => {
 
     it('should generate new tokens using a valid refresh token', async () => {
       const response = await request(app)
-        .post('/auth/refreshToken')
+        .post('/api/auth/refreshToken')
         .set('Authorization', `Bearer ${refreshToken}`)
         .expect(200);
 
@@ -170,9 +170,9 @@ describe('Auth Controller', () => {
         email: 'reuse@test.com',
         password: 'password123',
       };
-      await request(app).post('/auth/register').send(regData);
+      await request(app).post('/api/auth/register').send(regData);
 
-      const loginRes = await request(app).post('/auth/login').send({
+      const loginRes = await request(app).post('/api/auth/login').send({
         username: regData.username,
         password: regData.password,
       });
@@ -185,7 +185,7 @@ describe('Auth Controller', () => {
       );
 
       const response = await request(app)
-        .post('/auth/refreshToken')
+        .post('/api/auth/refreshToken')
         .set('Authorization', `Bearer ${validButUnrecognizedToken}`);
 
       expect(response.status).toEqual(403);
@@ -195,11 +195,11 @@ describe('Auth Controller', () => {
     });
 
     it('should return 403 for an invalid token signature', async () => {
-      await request(app).post('/auth/refreshToken').set('Authorization', 'Bearer invalid_token_here').expect(403);
+      await request(app).post('/api/auth/refreshToken').set('Authorization', 'Bearer invalid_token_here').expect(403);
     });
 
     it('should return 401 when no Authorization header is provided', async () => {
-      await request(app).post('/auth/refreshToken').expect(401);
+      await request(app).post('/api/auth/refreshToken').expect(401);
     });
 
     it('should return 403 when the token belongs to a deleted user', async () => {
@@ -208,28 +208,28 @@ describe('Auth Controller', () => {
         process.env.REFRESH_TOKEN_SECRET as string,
       );
 
-      await request(app).post('/auth/refreshToken').set('Authorization', `Bearer ${tokenForDeletedUser}`).expect(403);
+      await request(app).post('/api/auth/refreshToken').set('Authorization', `Bearer ${tokenForDeletedUser}`).expect(403);
     });
   });
 
-  describe('POST /auth/logout', () => {
+  describe('POST /api/auth/logout', () => {
     it("should remove the specific token from the user's list", async () => {
-      await request(app).post('/auth/register').send(testUser);
-      const log = await request(app).post('/auth/login').send({
+      await request(app).post('/api/auth/register').send(testUser);
+      const log = await request(app).post('/api/auth/login').send({
         username: testUser.username,
         password: testUser.password,
       });
       const loginData = log.body as AuthTokensDtoWithId;
       const token = loginData.refreshToken;
 
-      await request(app).post('/auth/logout').set('Authorization', `Bearer ${token}`).expect(200);
+      await request(app).post('/api/auth/logout').set('Authorization', `Bearer ${token}`).expect(200);
 
       const user = await User.findById(loginData._id);
       expect(user?.refreshTokens).not.toContain(token);
     });
 
     it('should return 401 if no token provided during logout', async () => {
-      await request(app).post('/auth/logout').expect(401);
+      await request(app).post('/api/auth/logout').expect(401);
     });
 
     it('should return 403 when logout token belongs to a deleted user', async () => {
@@ -238,12 +238,12 @@ describe('Auth Controller', () => {
         process.env.REFRESH_TOKEN_SECRET as string,
       );
 
-      await request(app).post('/auth/logout').set('Authorization', `Bearer ${tokenForDeletedUser}`).expect(403);
+      await request(app).post('/api/auth/logout').set('Authorization', `Bearer ${tokenForDeletedUser}`).expect(403);
     });
 
     it('should clear tokens and return 403 if refresh token is not in DB (reuse on logout)', async () => {
-      await request(app).post('/auth/register').send(testUser);
-      const log = await request(app).post('/auth/login').send({
+      await request(app).post('/api/auth/register').send(testUser);
+      const log = await request(app).post('/api/auth/login').send({
         username: testUser.username,
         password: testUser.password,
       });
@@ -254,7 +254,7 @@ describe('Auth Controller', () => {
         process.env.REFRESH_TOKEN_SECRET as string,
       );
 
-      const res = await request(app).post('/auth/logout').set('Authorization', `Bearer ${unusedToken}`).expect(403);
+      const res = await request(app).post('/api/auth/logout').set('Authorization', `Bearer ${unusedToken}`).expect(403);
 
       expect((res.body as ErrorResponse).message).toBeTruthy();
 
@@ -263,13 +263,13 @@ describe('Auth Controller', () => {
     });
   });
 
-  describe('GET /auth/me', () => {
+  describe('GET /api/auth/me', () => {
     let accessToken: string;
     let userId: string;
 
     beforeEach(async () => {
-      await request(app).post('/auth/register').send(testUser);
-      const log = await request(app).post('/auth/login').send({
+      await request(app).post('/api/auth/register').send(testUser);
+      const log = await request(app).post('/api/auth/login').send({
         username: testUser.username,
         password: testUser.password,
       });
@@ -279,7 +279,7 @@ describe('Auth Controller', () => {
     });
 
     it('should return the current user profile with a valid access token', async () => {
-      const response = await request(app).get('/auth/me').set('Authorization', `Bearer ${accessToken}`).expect(200);
+      const response = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${accessToken}`).expect(200);
 
       const user = response.body as { _id: string; username: string; email: string };
       expect(user).toHaveProperty('_id');
@@ -288,17 +288,17 @@ describe('Auth Controller', () => {
     });
 
     it('should return 401 if no Authorization header is provided', async () => {
-      await request(app).get('/auth/me').expect(401);
+      await request(app).get('/api/auth/me').expect(401);
     });
 
     it('should return 403 if an invalid/expired token is provided', async () => {
-      await request(app).get('/auth/me').set('Authorization', 'Bearer totally.invalid.token').expect(403);
+      await request(app).get('/api/auth/me').set('Authorization', 'Bearer totally.invalid.token').expect(403);
     });
 
     it('should return 404 when user is deleted after token was issued', async () => {
       await User.findByIdAndDelete(userId);
 
-      const response = await request(app).get('/auth/me').set('Authorization', `Bearer ${accessToken}`).expect(404);
+      const response = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${accessToken}`).expect(404);
 
       expect((response.body as ErrorResponse).message).toBeTruthy();
     });
