@@ -16,7 +16,7 @@ const router: Router = Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -65,7 +65,7 @@ router.post('/register', profileImageMiddleware, register);
 
 /**
  * @swagger
- * /auth/me:
+ * /api/auth/me:
  *   get:
  *     summary: Get the currently authenticated user in the session
  *     tags: [Auth]
@@ -105,7 +105,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/google/callback:
+ * /api/auth/google/callback:
  *   get:
  *     summary: Google OAuth2 callback
  *     tags: [Auth]
@@ -122,7 +122,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
  *     summary: Login with username and password
  *     tags: [Auth]
@@ -162,7 +162,7 @@ router.post('/login', login);
 
 /**
  * @swagger
- * /auth/logout:
+ * /api/auth/logout:
  *   post:
  *     summary: Logout the current user and invalidate the refresh token
  *     tags: [Auth]
@@ -194,7 +194,7 @@ router.post('/logout', logout);
 
 /**
  * @swagger
- * /auth/refreshToken:
+ * /api/auth/refreshToken:
  *   post:
  *     summary: Refresh the access token using a refresh token
  *     tags: [Auth]

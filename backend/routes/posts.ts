@@ -22,7 +22,7 @@ const router: Router = Router();
 
 /**
  * @swagger
- * /posts/all:
+ * /api/posts/all:
  *   get:
  *     summary: Get all posts
  *     tags: [Posts]
@@ -48,7 +48,7 @@ router.get('/all', authMiddleware, getAllPosts);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   get:
  *     summary: Get a post by ID
  *     tags: [Posts]
@@ -85,7 +85,7 @@ router.get('/:id', authMiddleware, getPostById);
 
 /**
  * @swagger
- * /posts:
+ * /api/posts:
  *   get:
  *     summary: Get posts by sender ID
  *     tags: [Posts]
@@ -118,7 +118,7 @@ router.get('/', authMiddleware, getPostsBySenderId);
 
 /**
  * @swagger
- * /posts:
+ * /api/posts:
  *   post:
  *     summary: Create a new post
  *     tags: [Posts]
@@ -165,7 +165,7 @@ router.post('/', authMiddleware, postImageMiddleware, createPost);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   put:
  *     summary: Update a post by ID
  *     tags: [Posts]
@@ -216,7 +216,7 @@ router.put('/:id', authMiddleware, postImageMiddleware, updatePost);
 
 /**
  * @swagger
- * /posts/like:
+ * /api/posts/like:
  *   patch:
  *     summary: Toggle like on a post
  *     tags: [Posts]
@@ -258,7 +258,7 @@ router.patch('/like', authMiddleware, toggleLike);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /api/posts/{id}:
  *   delete:
  *     summary: Delete a post by ID
  *     tags: [Posts]

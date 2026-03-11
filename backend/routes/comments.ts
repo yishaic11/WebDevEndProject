@@ -20,7 +20,7 @@ const router: Router = Router();
 
 /**
  * @swagger
- * /comments:
+ * /api/comments:
  *   get:
  *     summary: Get all comments
  *     tags: [Comments]
@@ -46,7 +46,7 @@ router.get('/', authMiddleware, getAllComments);
 
 /**
  * @swagger
- * /comments/{id}:
+ * /api/comments/{id}:
  *   get:
  *     summary: Get a comment by ID
  *     tags: [Comments]
@@ -83,7 +83,7 @@ router.get('/:id', authMiddleware, getCommentById);
 
 /**
  * @swagger
- * /comments/post/{id}:
+ * /api/comments/post/{id}:
  *   get:
  *     summary: Get all comments of a specific post
  *     tags: [Comments]
@@ -116,7 +116,7 @@ router.get('/post/:id', authMiddleware, getCommentsByPostId);
 
 /**
  * @swagger
- * /comments:
+ * /api/comments:
  *   post:
  *     summary: Create a new comment
  *     tags: [Comments]
@@ -162,7 +162,7 @@ router.post('/', authMiddleware, createComment);
 
 /**
  * @swagger
- * /comments/{id}:
+ * /api/comments/{id}:
  *   put:
  *     summary: Update a comment by ID
  *     tags: [Comments]
@@ -211,7 +211,7 @@ router.put('/:id', authMiddleware, updateComment);
 
 /**
  * @swagger
- * /comments/{id}:
+ * /api/comments/{id}:
  *   delete:
  *     summary: Delete a comment by ID
  *     tags: [Comments]

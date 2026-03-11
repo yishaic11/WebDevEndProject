@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "main": "dist/app.js",
   "scripts": {
+    "prod": "cp .envprod .env && tsc -p tsconfig.prod.json && node dist/app.js",
     "dev": "tsc && node --env-file=../.env dist/app.js",
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",
@@ -35,15 +36,8 @@
     "jsonwebtoken": "^9.0.3",
     "bcrypt": "^6.0.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
-  },
-  "devDependencies": {
+    "swagger-ui-express": "^5.0.1",
     "@types/express": "^5.0.0",
-    "@types/jest": "^30.0.0",
-    "eslint": "^9.39.1",
-    "nodemon": "^3.1.10",
-    "supertest": "^7.1.4",
-    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
     "@types/multer": "^2.0.0",
@@ -51,8 +45,16 @@
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/bcrypt": "^6.0.0",
-    "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8"
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/node": "^24.10.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.1",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.6",
+    "@types/supertest": "^6.0.3"
   }
 }
