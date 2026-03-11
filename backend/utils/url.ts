@@ -1,5 +1,6 @@
 export const getBaseUrl = (): string => {
+  const prefix = process.env.NODE_ENV === 'prod' ? 'https' : 'http'
   const domain = process.env.DOMAIN_BASE || 'localhost';
   const port = process.env.PORT || '3000';
-  return `http://${domain}:${port}/`;
+  return `${prefix}://${domain}:${port}/`;
 };
