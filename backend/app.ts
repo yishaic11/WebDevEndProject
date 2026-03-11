@@ -6,7 +6,7 @@ import fs from 'fs';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 void initApp().then((app) => {
-  if (NODE_ENV === 'prod') {
+  if (NODE_ENV === 'production') {
     const PORT = process.env.PORT || 443;
 
     const privateKey = fs.readFileSync('./https/private-key.pem', 'utf8');
