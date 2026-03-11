@@ -35,10 +35,10 @@ const pngBuffer = Buffer.from(
 describe('Posts Controller Integration', () => {
   const fakeId = new mongoose.Types.ObjectId().toString();
 
-  describe('POST /posts', () => {
+  describe('POST /api/posts', () => {
     it('should create a post and return 200', async () => {
       const response = await request(app)
-        .post('/posts')
+        .post('/api/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('content', 'Hello World')
         .attach('photo', pngBuffer, 'post.png')
@@ -52,7 +52,7 @@ describe('Posts Controller Integration', () => {
 
     it('should create a post with a photo', async () => {
       const res = await request(app)
-        .post('/posts')
+        .post('/api/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('content', 'My photo post')
         .attach('photo', pngBuffer, 'post.png')
@@ -67,20 +67,20 @@ describe('Posts Controller Integration', () => {
 
     it('should return 400 when creating a post without a photo', async () => {
       await request(app)
-        .post('/posts')
+        .post('/api/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'Text only post' })
         .expect(400);
     });
   });
 
-  describe('GET /posts/all', () => {
+  describe('GET /api/posts/all', () => {
     it('should retrieve all posts', async () => {
       await createTestPost(userData._id, 'Post 1');
       await createTestPost(userData._id, 'Post 2');
 
       const response = await request(app)
-        .get('/posts/all')
+        .get('/api/posts/all')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -89,12 +89,12 @@ describe('Posts Controller Integration', () => {
     });
   });
 
-  describe('GET /posts/:id', () => {
+  describe('GET /api/posts/:id', () => {
     it('should return a post by ID', async () => {
       const post = await createTestPost(userData._id, 'Find me by ID');
 
       const response = await request(app)
-        .get(`/posts/${post._id.toString()}`)
+        .get(`/api/posts/${post._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -105,19 +105,19 @@ describe('Posts Controller Integration', () => {
       const nonExistentId = new mongoose.Types.ObjectId().toString();
 
       await request(app)
-        .get(`/posts/${nonExistentId}`)
+        .get(`/api/posts/${nonExistentId}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(500);
     });
   });
 
-  describe('GET /posts (By Sender)', () => {
+  describe('GET /api/posts (By Sender)', () => {
     it('should filter posts by senderId', async () => {
       await createTestPost(userData._id, 'My Post');
       await createTestPost(fakeId, 'Other Post');
 
       const response = await request(app)
-        .get(`/posts?sender=${userData._id}`)
+        .get(`/api/posts?sender=${userData._id}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -127,15 +127,15 @@ describe('Posts Controller Integration', () => {
     });
 
     it('should return 400 when sender query param is missing', async () => {
-      await request(app).get('/posts').set('Authorization', `Bearer ${userData.accessToken}`).expect(400);
+      await request(app).get('/api/posts').set('Authorization', `Bearer ${userData.accessToken}`).expect(400);
     });
   });
 
-  describe('PUT /posts/:id', () => {
+  describe('PUT /api/posts/:id', () => {
     it('should update post content if active user is the sender', async () => {
       const post = await createTestPost(userData._id, 'Old Content');
       const response = await request(app)
-        .put(`/posts/${post._id.toString()}`)
+        .put(`/api/posts/${post._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'New Content' })
         .expect(200);
@@ -148,7 +148,7 @@ describe('Posts Controller Integration', () => {
       const post = await createTestPost(userData._id, 'Update Me');
 
       const response = await request(app)
-        .put(`/posts/${post._id.toString()}`)
+        .put(`/api/posts/${post._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'Updated Text Only' })
         .expect(200);
@@ -162,7 +162,7 @@ describe('Posts Controller Integration', () => {
       const otherUserPost = await createTestPost(fakeId, 'Not Mine');
 
       await request(app)
-        .put(`/posts/${otherUserPost._id.toString()}`)
+        .put(`/api/posts/${otherUserPost._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ content: 'Trying to hack' })
         .expect(404);
@@ -170,7 +170,7 @@ describe('Posts Controller Integration', () => {
 
     it('should update a post and replace the photo', async () => {
       const createRes = await request(app)
-        .post('/posts')
+        .post('/api/posts')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('content', 'Original content')
         .attach('photo', pngBuffer, 'post.png')
@@ -179,7 +179,7 @@ describe('Posts Controller Integration', () => {
       const postId = (createRes.body as { _id: string })._id;
 
       const updateRes = await request(app)
-        .put(`/posts/${postId}`)
+        .put(`/api/posts/${postId}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('content', 'Updated content')
         .attach('photo', pngBuffer, 'updated.png')
@@ -191,12 +191,12 @@ describe('Posts Controller Integration', () => {
     });
   });
 
-  describe('PATCH /posts/like', () => {
+  describe('PATCH /api/posts/like', () => {
     it('should like an unliked post', async () => {
       const post = await createTestPost(userData._id, 'Like me');
 
       const response = await request(app)
-        .patch('/posts/like')
+        .patch('/api/posts/like')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ postId: post._id.toString() })
         .expect(200);
@@ -213,7 +213,7 @@ describe('Posts Controller Integration', () => {
       await post.save();
 
       const response = await request(app)
-        .patch('/posts/like')
+        .patch('/api/posts/like')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ postId: post._id.toString() })
         .expect(200);
@@ -225,12 +225,12 @@ describe('Posts Controller Integration', () => {
     });
   });
 
-  describe('DELETE /posts/:id', () => {
+  describe('DELETE /api/posts/:id', () => {
     it('should fail deletion if user is not the owner', async () => {
       const otherPost = await createTestPost(fakeId, 'Owner is fakeId');
 
       await request(app)
-        .delete(`/posts/${otherPost._id.toString()}`)
+        .delete(`/api/posts/${otherPost._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(404);
     });
@@ -240,7 +240,7 @@ describe('Posts Controller Integration', () => {
       await createTestComment(post._id.toString(), userData._id, 'Delete this too');
 
       await request(app)
-        .delete(`/posts/${post._id.toString()}`)
+        .delete(`/api/posts/${post._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 

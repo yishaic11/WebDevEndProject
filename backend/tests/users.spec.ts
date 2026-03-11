@@ -22,10 +22,10 @@ beforeEach(async () => {
 });
 
 describe('Users Controller', () => {
-  describe('GET /users', () => {
+  describe('GET /api/users', () => {
     it('should return all users, only the authenticated user initially', async () => {
       const response = await request(app)
-        .get('/users')
+        .get('/api/users')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -49,7 +49,7 @@ describe('Users Controller', () => {
       ]);
 
       const response = await request(app)
-        .get('/users')
+        .get('/api/users')
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -58,14 +58,14 @@ describe('Users Controller', () => {
     });
 
     it('should return 401 if no token is provided', async () => {
-      await request(app).get('/users').expect(401);
+      await request(app).get('/api/users').expect(401);
     });
   });
 
-  describe('GET /users/:id', () => {
+  describe('GET /api/users/:id', () => {
     it('should return a single user when given a valid ID', async () => {
       const response = await request(app)
-        .get(`/users/${userData._id}`)
+        .get(`/api/users/${userData._id}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -75,11 +75,11 @@ describe('Users Controller', () => {
 
     it("should return 404 when user ID format is valid but user doesn't exist", async () => {
       const fakeId = new mongoose.Types.ObjectId().toString();
-      await request(app).get(`/users/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(404);
+      await request(app).get(`/api/users/${fakeId}`).set('Authorization', `Bearer ${userData.accessToken}`).expect(404);
     });
   });
 
-  describe('PUT /users/:id', () => {
+  describe('PUT /api/users/:id', () => {
     it('should update the username and photo', async () => {
       const newUsername = `newuser_${Date.now()}`;
       const pngBuffer = Buffer.from(
@@ -88,7 +88,7 @@ describe('Users Controller', () => {
       );
 
       const response = await request(app)
-        .put(`/users/${userData._id}`)
+        .put(`/api/users/${userData._id}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('username', newUsername)
         .attach('photo', pngBuffer, 'avatar.png')
@@ -105,7 +105,7 @@ describe('Users Controller', () => {
       const originalEmail = userData.email;
 
       await request(app)
-        .put(`/users/${userData._id}`)
+        .put(`/api/users/${userData._id}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .send({ email: 'hack@test.com' })
         .expect(200);
@@ -118,17 +118,17 @@ describe('Users Controller', () => {
       const otherUser = await User.create({ username: 'other', email: 'other@t.com', password: 'p' });
 
       await request(app)
-        .put(`/users/${otherUser._id.toString()}`)
+        .put(`/api/users/${otherUser._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .field('username', 'hacker')
         .expect(403);
     });
   });
 
-  describe('DELETE /users/:id', () => {
+  describe('DELETE /api/users/:id', () => {
     it('should delete a specific user', async () => {
       await request(app)
-        .delete(`/users/${userData._id}`)
+        .delete(`/api/users/${userData._id}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(200);
 
@@ -142,7 +142,7 @@ describe('Users Controller', () => {
       const otherUser = await User.create({ username: 'other', email: 'other@t.com', password: 'p' });
 
       await request(app)
-        .delete(`/users/${otherUser._id.toString()}`)
+        .delete(`/api/users/${otherUser._id.toString()}`)
         .set('Authorization', `Bearer ${userData.accessToken}`)
         .expect(403);
     });
