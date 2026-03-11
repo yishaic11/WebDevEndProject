@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prod": "npm run build && rm -rf ../backend/public/client-dist && mv dist ../backend/public/client-dist",
+    "prod": "cp ../.envprod ../.env && npm run build && rm -rf ../backend/public/client-dist && mv dist ../backend/public/client-dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "start": "tsc -b && vite build && vite",

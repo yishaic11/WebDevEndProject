@@ -53,7 +53,7 @@ const initApp = () => {
       res.send(specs);
     });
 
-    const isProd = process.env.NODE_ENV === 'prod';
+    const isProd = process.env.NODE_ENV === 'production';
 
     if (isProd) {
       const reactBuildPath = path.join(process.cwd(), 'public/client-dist');
