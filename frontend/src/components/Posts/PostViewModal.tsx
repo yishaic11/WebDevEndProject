@@ -26,8 +26,8 @@ import {
 import type { Post } from '../../types/post.types';
 import type { Comment } from '../../types/comment.types';
 import { commentsApi } from '../../api/comments.api';
-import { usersApi } from '../../api/users.api';
 import { useAuth } from '../../hooks/useAuth';
+import defaultImg from '../../assets/default-profile-image.png';
 
 interface PostViewModalProps {
   open: boolean;
@@ -68,26 +68,13 @@ export const PostViewModal = ({
       try {
         const apiComments = await commentsApi.getByPostId(post.id);
 
-        const uniqueSenderIds = [...new Set(apiComments.map((comment) => comment.senderId))];
-        const userMap: Record<string, string> = {};
-
-        await Promise.all(
-          uniqueSenderIds.map(async (id) => {
-            try {
-              const user = await usersApi.getById(id);
-              userMap[id] = user.username;
-            } catch {
-              userMap[id] = id;
-            }
-          }),
-        );
-
         setComments(
           apiComments.map((comment) => ({
             id: comment._id,
             senderId: comment.senderId,
-            username: userMap[comment.senderId] ?? comment.senderId,
+            username: comment.username,
             text: comment.content,
+            photoUrl: comment.photoUrl ?? defaultImg,
           })),
         );
 
@@ -118,8 +105,9 @@ export const PostViewModal = ({
       const newEntry: Comment = {
         id: newApiComment._id,
         senderId: newApiComment.senderId,
-        username: user.username,
+        username: newApiComment.username,
         text: newApiComment.content,
+        photoUrl: newApiComment.photoUrl ?? defaultImg,
       };
 
       setComments((prev) => [newEntry, ...prev]);
@@ -232,7 +220,15 @@ export const PostViewModal = ({
           }}
         >
           <Box sx={{ p: '2.5vh', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Avatar sx={{ bgcolor: '#44A194', width: '4.5vh', height: '4.5vh' }}>{post.username[0]}</Avatar>
+            <Avatar
+              sx={{ bgcolor: '#44A194', width: '4.5vh', height: '4.5vh' }}
+              slotProps={{
+                img: {
+                  referrerPolicy: 'no-referrer',
+                },
+              }}
+              src={post.userImage ?? defaultImg}
+            />
             <Typography fontWeight={800} color='#537D96' fontSize='2.5vh'>
               {post.username}
             </Typography>
@@ -260,12 +256,20 @@ export const PostViewModal = ({
           </Box>
 
           <Box sx={{ flexGrow: 1, overflowY: 'auto', p: '2.5vh' }}>
-            {comments.map((c) => (
-              <Box key={c.id} sx={{ display: 'flex', gap: 1.5, mb: '2vh', alignItems: 'flex-start' }}>
-                <Avatar sx={{ width: '3.5vh', height: '3.5vh', fontSize: '1.4vh' }}>{c.username[0]}</Avatar>
+            {comments.map((comment) => (
+              <Box key={comment.id} sx={{ display: 'flex', gap: 1.5, mb: '2vh', alignItems: 'flex-start' }}>
+                <Avatar
+                  sx={{ width: '3.5vh', height: '3.5vh', fontSize: '1.4vh' }}
+                  slotProps={{
+                    img: {
+                      referrerPolicy: 'no-referrer',
+                    },
+                  }}
+                  src={comment.photoUrl}
+                />
 
                 <Box sx={{ flex: 1 }}>
-                  {editingCommentId === c.id ? (
+                  {editingCommentId === comment.id ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
                         <TextField
@@ -290,13 +294,13 @@ export const PostViewModal = ({
                     </Box>
                   ) : (
                     <Typography sx={{ fontSize: '2vh', wordBreak: 'break-word', lineHeight: 1.4 }}>
-                      <strong>{c.username}</strong> {c.text}
+                      <strong>{comment.username}</strong> {comment.text}
                     </Typography>
                   )}
                 </Box>
 
-                {c.senderId === user?.id && editingCommentId !== c.id && (
-                  <IconButton size='small' onClick={(e) => handleMenuOpen(e, c)}>
+                {comment.senderId === user?.id && editingCommentId !== comment.id && (
+                  <IconButton size='small' onClick={(e) => handleMenuOpen(e, comment)}>
                     <MoreVert fontSize='small' />
                   </IconButton>
                 )}

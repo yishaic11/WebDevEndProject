@@ -2,6 +2,7 @@ export interface Comment {
   id: string;
   senderId: string;
   username: string;
+  photoUrl: string;
   text: string;
 }
 
@@ -10,4 +11,6 @@ export interface ApiComment {
   content: string;
   postId: string;
   senderId: string;
+  username: string;
+  photoUrl?: string;
 }

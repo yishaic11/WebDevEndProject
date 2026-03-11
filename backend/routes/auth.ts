@@ -89,7 +89,7 @@ router.get('/me', authMiddleware, getCurrentUser);
 
 /**
  * @swagger
- * /auth/google:
+ * /api/auth/google:
  *   get:
  *     summary: Initiate Google OAuth2 login
  *     tags: [Auth]

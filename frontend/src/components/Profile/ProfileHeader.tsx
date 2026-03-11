@@ -17,6 +17,11 @@ export const ProfileHeader = ({ username, email, avatarUrl, onEdit }: ProfileHea
           width: { xs: 60, sm: 80, md: 100 },
           height: { xs: 60, sm: 80, md: 100 },
         }}
+        slotProps={{
+          img: {
+            referrerPolicy: 'no-referrer',
+          },
+        }}
       />
 
       <Box sx={{ flexGrow: 1 }}>
