@@ -59,6 +59,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 sx={{
                   borderRadius: 3,
                   py: 1.5,
+                  pr: 15,
                   '&.Mui-selected': { bgcolor: '#44A194', color: 'white' },
                   '&.Mui-selected .MuiListItemIcon-root': { color: 'white' },
                   '&:hover': { bgcolor: 'rgba(68, 161, 148, 0.1)' },
