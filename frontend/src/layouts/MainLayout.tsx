@@ -29,12 +29,13 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F4F0E4' }}>
       <Box
         sx={{
-          width: '260px',
+          width: 'fit-content',
           bgcolor: 'white',
           borderRight: '1px solid rgba(0,0,0,0.05)',
           display: 'flex',
           flexDirection: 'column',
-          position: 'fixed',
+          position: 'sticky',
+          top: 0,
           height: '100vh',
           zIndex: 1000,
         }}
@@ -44,9 +45,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           src={logo}
           alt='Logo'
           sx={{
-            height: '20vh',
-            maxWidth: '20vh',
-            objectFit: 'contain',
+            height: '150px',
+            maxWidth: '150px',
           }}
           onClick={() => void navigate('/home')}
         />
@@ -59,17 +59,18 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 sx={{
                   borderRadius: 3,
                   py: 1.5,
+                  pr: 15,
                   '&.Mui-selected': { bgcolor: '#44A194', color: 'white' },
                   '&.Mui-selected .MuiListItemIcon-root': { color: 'white' },
                   '&:hover': { bgcolor: 'rgba(68, 161, 148, 0.1)' },
                 }}
               >
                 <ListItemIcon sx={{ color: '#537D96', minWidth: 40 }}>
-                  {cloneElement(item.icon as React.ReactElement<SvgIconProps>, { sx: { fontSize: 24 } })}
+                  {cloneElement(item.icon as React.ReactElement<SvgIconProps>, { sx: { fontSize: '86' } })}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.text}
-                  slotProps={{ primary: { sx: { fontWeight: 600, fontSize: '3vh' } } }}
+                  slotProps={{ primary: { sx: { fontWeight: 600, fontSize: '86' } } }}
                 />
               </ListItemButton>
             </ListItem>
@@ -79,9 +80,12 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Box sx={{ p: 2, mb: 2 }}>
           <ListItemButton onClick={() => void handleLogout()} sx={{ borderRadius: 3 }}>
             <ListItemIcon sx={{ minWidth: 40 }}>
-              <ExitToApp sx={{ color: '#EC8F8D' }} />
+              <ExitToApp sx={{ color: '#EC8F8D', fontSize: '48' }} />
             </ListItemIcon>
-            <ListItemText primary='Logout' slotProps={{ primary: { sx: { fontWeight: 600, color: '#EC8F8D' } } }} />
+            <ListItemText
+              primary='Logout'
+              slotProps={{ primary: { sx: { fontWeight: 600, color: '#EC8F8D', fontSize: '48' } } }}
+            />
           </ListItemButton>
         </Box>
       </Box>
@@ -89,7 +93,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <Box
         sx={{
           flexGrow: 1,
-          ml: '20vw',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
